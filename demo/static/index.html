@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Simulation Lab — Dummy campaign vs world model</title>
+  <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+  <div class="crt"></div>
+  <header class="top">
+    <div>
+      <p class="kicker">Isolated lab · dummy implant · no real network</p>
+      <h1>Live campaign vs detectors</h1>
+    </div>
+    <div class="top-actions">
+      <button id="btn-launch" class="primary">Launch dummy malware</button>
+      <button id="btn-pause" disabled>Pause</button>
+      <button id="btn-step" disabled>Step</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel controls">
+      <h2>Specimen</h2>
+      <div class="cards" id="scenarios">
+        <button class="card active" data-scenario="full_chain">
+          <strong>DUMMY-HYDRA</strong>
+          <span>Full chain</span>
+        </button>
+        <button class="card" data-scenario="recon_footprint">
+          <strong>DUMMY-RECON</strong>
+          <span>Recon + footprint</span>
+        </button>
+        <button class="card" data-scenario="pentest_lateral">
+          <strong>DUMMY-LATERAL</strong>
+          <span>Pentest + pivot</span>
+        </button>
+        <button class="card" data-scenario="data_theft">
+          <strong>DUMMY-MOTH</strong>
+          <span>Data theft</span>
+        </button>
+        <button class="card" data-scenario="benign_admin">
+          <strong>DUMMY-BENIGN</strong>
+          <span>Admin / backup</span>
+        </button>
+      </div>
+
+      <h2>Parameters</h2>
+      <label>Stealth <output id="stealth-out">35</output></label>
+      <input id="stealth" type="range" min="0" max="90" value="35"/>
+      <label>Playback speed <output id="speed-out">1.0×</output></label>
+      <input id="speed" type="range" min="4" max="20" value="10"/>
+      <label>XGBoost threshold <output id="ml-out">0.50</output></label>
+      <input id="ml-th" type="range" min="20" max="90" value="50"/>
+      <label>World-model threshold <output id="ns-out">0.24</output></label>
+      <input id="ns-th" type="range" min="10" max="60" value="24"/>
+      <label class="check"><input id="noise" type="checkbox"/> Mix benign office noise</label>
+      <p class="hint">Stealth weakens obvious tool names. Thresholds decide when each detector alerts.</p>
+    </aside>
+
+    <section class="stage">
+      <div class="impact" id="impact">
+        <div><em>Hosts found</em><strong data-k="hosts_discovered">0</strong></div>
+        <div><em>Fingerprints</em><strong data-k="services_fingerprinted">0</strong></div>
+        <div><em>Ports probed</em><strong data-k="ports_probed">0</strong></div>
+        <div><em>Files touched</em><strong data-k="files_touched">0</strong></div>
+        <div class="hot"><em>Data stolen</em><strong data-k="mb_exfiltrated">0 MB</strong></div>
+        <div><em>Creds touched</em><strong data-k="credentials_touched">0</strong></div>
+        <div><em>Pivots</em><strong data-k="hosts_pivoted">0</strong></div>
+      </div>
+
+      <svg id="map" viewBox="0 0 1100 520" role="img" aria-label="Lab network map">
+        <defs>
+          <linearGradient id="link" x1="0" x2="1">
+            <stop offset="0%" stop-color="#3d5a4c"/>
+            <stop offset="100%" stop-color="#1f3329"/>
+          </linearGradient>
+        </defs>
+        <path class="edge" d="M160,160 C280,160 300,250 430,250"/>
+        <path class="edge" d="M430,250 L640,180"/>
+        <path class="edge" d="M430,250 L640,330"/>
+        <path class="edge" d="M640,180 L860,250"/>
+        <path class="edge" d="M640,330 L860,250"/>
+        <path class="edge" d="M640,330 L640,440"/>
+
+        <g class="node" id="node-attacker" data-id="attacker" transform="translate(90,140)">
+          <circle r="34"/><text y="4">ATK</text>
+          <text class="label" y="56">Dummy C2</text>
+        </g>
+        <g class="node" id="node-workstation" data-id="workstation" transform="translate(430,250)">
+          <circle r="38"/><text y="4">PC</text>
+          <text class="label" y="60">alice-pc</text>
+        </g>
+        <g class="node" id="node-fileserver" data-id="fileserver" transform="translate(640,180)">
+          <circle r="34"/><text y="4">FS</text>
+          <text class="label" y="56">fileserver</text>
+        </g>
+        <g class="node" id="node-dc" data-id="dc" transform="translate(640,330)">
+          <circle r="34"/><text y="4">DC</text>
+          <text class="label" y="56">dc-01</text>
+        </g>
+        <g class="node" id="node-vault" data-id="vault" transform="translate(860,250)">
+          <circle r="38"/><text y="4">VAULT</text>
+          <text class="label" y="60">finance share</text>
+        </g>
+        <g id="flying"></g>
+      </svg>
+
+      <div class="now" id="now">
+        <span class="stage-tag" id="stage-tag">idle</span>
+        <div>
+          <strong id="now-title">Waiting to launch</strong>
+          <p id="now-copy">Pick a dummy specimen and parameters, then launch.</p>
+        </div>
+      </div>
+
+      <ol class="log" id="log"></ol>
+    </section>
+
+    <aside class="panel detectors">
+      <div class="detector xgb">
+        <h2>XGBoost</h2>
+        <p class="meter-label">P(malicious | event)</p>
+        <div class="meter"><span id="ml-bar"></span></div>
+        <p class="score" id="ml-score">0.00</p>
+        <p class="status" id="ml-status">quiet</p>
+        <p class="when" id="ml-when">No alert yet</p>
+      </div>
+      <div class="detector ns">
+        <h2>Neuro-symbolic</h2>
+        <p class="meter-label">Hidden-state belief</p>
+        <div id="beliefs"></div>
+        <p class="status" id="ns-status">quiet</p>
+        <p class="when" id="ns-when">No alert yet</p>
+        <p class="action" id="ns-action">action: do_nothing</p>
+        <ul class="rules" id="rules"></ul>
+      </div>
+      <div class="verdict" id="verdict">Launch to race the two detectors.</div>
+    </aside>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

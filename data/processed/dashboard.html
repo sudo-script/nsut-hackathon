@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Security World Model</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: Inter, system-ui, sans-serif; margin: 0; background: #0f1412; color: #e8efe9; }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1, h2 { color: #b7e4c7; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: #18201c; border: 1px solid #2d6a4f; border-radius: 12px; padding: 16px 18px; }
+    .bar { background: #1b4332; height: 10px; border-radius: 99px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: #52b788; }
+    .muted { color: #95d5b2; font-size: 0.92rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #244c38; font-size: 0.92rem; }
+    code { color: #d8f3dc; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Neuro-symbolic security world model</h1>
+  <p class="muted">V1 endpoint layer: ML perception, temporal graph, symbolic rules, belief state, active investigation.</p>
+
+  <div class="grid">
+    <section class="card">
+      <h2>World state</h2>
+      <p>Normal<br/><div class='bar'><span style='width:0.0%'></span></div><span class='muted'>0%</span></p>
+<p>Suspicious Execution<br/><div class='bar'><span style='width:93.8%'></span></div><span class='muted'>94%</span></p>
+<p>Persistence<br/><div class='bar'><span style='width:0.0%'></span></div><span class='muted'>0%</span></p>
+<p>Credential Access<br/><div class='bar'><span style='width:0.1%'></span></div><span class='muted'>0%</span></p>
+<p>Lateral Movement<br/><div class='bar'><span style='width:0.2%'></span></div><span class='muted'>0%</span></p>
+<p>Command And Control<br/><div class='bar'><span style='width:0.1%'></span></div><span class='muted'>0%</span></p>
+<p>Compromised<br/><div class='bar'><span style='width:5.8%'></span></div><span class='muted'>6%</span></p>
+    </section>
+    <section class="card">
+      <h2>Agent decision</h2>
+      <p><strong>block_connection_simulated</strong></p>
+      <p class="muted">Simulated block reduces C2 risk after the destination is known (already inspected; diminishing returns) (containment already simulated); high attack belief favors simulated containment</p>
+      <p>Next-stage predictions: command_and_control (1.00), credential_access (0.94), persistence (0.94)</p>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:16px">
+    <h2>Attack timeline</h2>
+    <table>
+      <tr><th>t</th><th>Event</th><th>ML risk</th><th>Rules</th><th>Action</th></tr>
+      <tr><td>0</td><td>ProcessEvent</td><td>0.01</td><td>—</td><td><code>do_nothing</code></td></tr>
+<tr><td>1</td><td>ProcessEvent</td><td>0.96</td><td>Office process spawned a script interpreter, Process executed from a temporary path</td><td><code>block_connection_simulated</code></td></tr>
+<tr><td>2</td><td>NetworkEvent</td><td>0.89</td><td>Script interpreter reached a rare external destination, Office-spawned child made an outbound connection</td><td><code>block_connection_simulated</code></td></tr>
+<tr><td>3</td><td>ProcessEvent</td><td>0.94</td><td>Encoded command or in-line download behavior, Multiple attack stages in one trajectory</td><td><code>block_connection_simulated</code></td></tr>
+<tr><td>4</td><td>ProcessEvent</td><td>0.98</td><td>Credential-access tool or artifact, Admin tool launched from an unusual parent</td><td><code>block_connection_simulated</code></td></tr>
+<tr><td>5</td><td>FileEvent</td><td>0.99</td><td>Credential-access tool or artifact, Multiple attack stages in one trajectory</td><td><code>block_connection_simulated</code></td></tr>
+<tr><td>6</td><td>ProcessEvent</td><td>0.98</td><td>Remote access after credential indicators, Temporary file followed by interpreter execution, Admin tool launched from an unusual parent, Multiple attack stages in one trajectory</td><td><code>block_connection_simulated</code></td></tr>
+<tr><td>7</td><td>AuthEvent</td><td>0.43</td><td>Remote access after credential indicators</td><td><code>block_connection_simulated</code></td></tr>
+    </table>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2>Experiment summary</h2>
+    <pre>{
+  "holdout_family": "family_beacon",
+  "n_train": 270,
+  "n_test": 124,
+  "test_1_classification": {
+    "xgboost": {
+      "accuracy": 0.8529,
+      "precision": 0.942,
+      "recall": 0.8125,
+      "f1": 0.8725,
+      "auroc": 0.9619,
+      "false_positive_rate": 0.0813
+    },
+    "random_forest": {
+      "accuracy": 0.8684,
+      "precision": 0.9412,
+      "recall": 0.84,
+      "f1": 0.8877,
+      "auroc": 0.9639,
+      "false_positive_rate": 0.0854
+    },
+    "neural": {
+      "accuracy": 0.8204,
+      "precision": 0.9494,
+      "recall": 0.75,
+      "f1": 0.838,
+      "auroc": 0.9168,
+      "false_positive_rate": 0.065
+    },
+    "neuro_symbolic": {
+      "accuracy": 0.9907,
+      "precision": 1.0,
+      "recall": 0.985,
+      "f1": 0.9924,
+      "auroc": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "test_2_unseen_behavior": {
+    "holdout_family": {
+      "name": "family_beacon",
+      "n_malicious": 16.0
+    },
+    "xgboost": {
+      "accuracy": 0.7368,
+      "precision": 0.4444,
+      "recall": 1.0,
+      "f1": 0.6154,
+      "auroc": 1.0,
+      "false_positive_rate": 0.3333
+    },
+    "neuro_symbolic": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "auroc": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "test_3_attack_chain": {
+    "n_chains": 64.0,
+    "ml_recall": 1.0,
+    "neuro_recall": 1.0,
+    "ml_mean_ttd_seconds": 270.0,
+    "neuro_mean_ttd_seconds": 0.0,
+    "ml_mean_events_to_detect": 1.75,
+    "neuro_mean_events_to_detect": 1.0
+  },
+  "test_4_weak_signal": {
+    "n_weak_attacks": {
+      "count": 16.0
+    },
+    "xgboost": {
+      "accuracy": 0.7368,
+      "precision": 0.4444,
+      "recall": 1.0,
+      "f1": 0.6154,
+      "auroc": 1.0,
+      "false_positive_rate": 0.3333
+    },
+    "neuro_symbolic": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "auroc": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "test_5_false_positives": {
+    "n_contextual_benign": 54.0,
+    "ml_false_positive_rate": 0.37037037037037035,
+    "neuro_false_positive_rate": 0.0,
+    "ml_attack_recall": 1.0,
+    "neuro_attack_recall": 1.0
+  },
+  "test_6_investigation_efficiency": {
+    "n_sequences": 124.0,
+    "system_a_investigations": 358.0,
+    "system_b_investigations": 128.0,
+    "system_a_alerts": 84.0,
+    "system_b_alerts": 64.0,
+    "system_a_alert_rate": 0.6774193548387096,
+    "system_b_alert_rate": 0.5161290322580645,
+    "investigation_reduction": 0.6424581005586592,
+    "cpu_seconds": 0.9990744949999453,
+    "peak_ram_kb": 578.419921875
+  },
+  "test_7_trajectory_prediction": {
+    "n_sequences": 64.0,
+    "top_k": 3.0,
+    "top_k_accuracy": 1.0,
+    "attack_path_reconstruction_rate": 1.0
+  },
+  "resource_usage": {
+    "user_cpu_seconds": 4.078323,
+    "max_rss_mb": 209.0703125
+  }
+}</pre>
+  </section>
+</main>
+</body>
+</html>

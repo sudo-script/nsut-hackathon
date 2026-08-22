@@ -1,0 +1,332 @@
+{
+  "holdout_family": "family_beacon",
+  "n_train": 270,
+  "n_test": 124,
+  "test_1_classification": {
+    "xgboost": {
+      "accuracy": 0.8529,
+      "precision": 0.942,
+      "recall": 0.8125,
+      "f1": 0.8725,
+      "auroc": 0.9619,
+      "false_positive_rate": 0.0813
+    },
+    "random_forest": {
+      "accuracy": 0.8684,
+      "precision": 0.9412,
+      "recall": 0.84,
+      "f1": 0.8877,
+      "auroc": 0.9639,
+      "false_positive_rate": 0.0854
+    },
+    "neural": {
+      "accuracy": 0.8204,
+      "precision": 0.9494,
+      "recall": 0.75,
+      "f1": 0.838,
+      "auroc": 0.9168,
+      "false_positive_rate": 0.065
+    },
+    "neuro_symbolic": {
+      "accuracy": 0.9907,
+      "precision": 1.0,
+      "recall": 0.985,
+      "f1": 0.9924,
+      "auroc": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "test_2_unseen_behavior": {
+    "holdout_family": {
+      "name": "family_beacon",
+      "n_malicious": 16.0
+    },
+    "xgboost": {
+      "accuracy": 0.7368,
+      "precision": 0.4444,
+      "recall": 1.0,
+      "f1": 0.6154,
+      "auroc": 1.0,
+      "false_positive_rate": 0.3333
+    },
+    "neuro_symbolic": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "auroc": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "test_3_attack_chain": {
+    "n_chains": 64.0,
+    "ml_recall": 1.0,
+    "neuro_recall": 1.0,
+    "ml_mean_ttd_seconds": 270.0,
+    "neuro_mean_ttd_seconds": 0.0,
+    "ml_mean_events_to_detect": 1.75,
+    "neuro_mean_events_to_detect": 1.0
+  },
+  "test_4_weak_signal": {
+    "n_weak_attacks": {
+      "count": 16.0
+    },
+    "xgboost": {
+      "accuracy": 0.7368,
+      "precision": 0.4444,
+      "recall": 1.0,
+      "f1": 0.6154,
+      "auroc": 1.0,
+      "false_positive_rate": 0.3333
+    },
+    "neuro_symbolic": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "auroc": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "test_5_false_positives": {
+    "n_contextual_benign": 54.0,
+    "ml_false_positive_rate": 0.37037037037037035,
+    "neuro_false_positive_rate": 0.0,
+    "ml_attack_recall": 1.0,
+    "neuro_attack_recall": 1.0
+  },
+  "test_6_investigation_efficiency": {
+    "n_sequences": 124.0,
+    "system_a_investigations": 358.0,
+    "system_b_investigations": 128.0,
+    "system_a_alerts": 84.0,
+    "system_b_alerts": 64.0,
+    "system_a_alert_rate": 0.6774193548387096,
+    "system_b_alert_rate": 0.5161290322580645,
+    "investigation_reduction": 0.6424581005586592,
+    "cpu_seconds": 0.9990744949999453,
+    "peak_ram_kb": 578.419921875
+  },
+  "test_7_trajectory_prediction": {
+    "n_sequences": 64.0,
+    "top_k": 3.0,
+    "top_k_accuracy": 1.0,
+    "attack_path_reconstruction_rate": 1.0
+  },
+  "demo": {
+    "sequence_id": "tst-mal-0334",
+    "family": "family_macro_dropper",
+    "events": [
+      {
+        "index": 0,
+        "type": "ProcessEvent",
+        "ml_risk": 0.006,
+        "rules": [],
+        "action": "do_nothing",
+        "reason": "Belief remains normal; skip expensive investigation",
+        "belief": {
+          "normal": 0.807,
+          "suspicious_execution": 0.06,
+          "persistence": 0.03,
+          "credential_access": 0.03,
+          "lateral_movement": 0.022,
+          "command_and_control": 0.03,
+          "compromised": 0.021
+        }
+      },
+      {
+        "index": 1,
+        "type": "ProcessEvent",
+        "ml_risk": 0.96,
+        "rules": [
+          "Office process spawned a script interpreter",
+          "Process executed from a temporary path"
+        ],
+        "action": "block_connection_simulated",
+        "reason": "Simulated block reduces C2 risk after the destination is known; high attack belief favors simulated containment",
+        "belief": {
+          "normal": 0.062,
+          "suspicious_execution": 0.793,
+          "persistence": 0.039,
+          "credential_access": 0.028,
+          "lateral_movement": 0.02,
+          "command_and_control": 0.029,
+          "compromised": 0.029
+        }
+      },
+      {
+        "index": 2,
+        "type": "NetworkEvent",
+        "ml_risk": 0.888,
+        "rules": [
+          "Script interpreter reached a rare external destination",
+          "Office-spawned child made an outbound connection"
+        ],
+        "action": "block_connection_simulated",
+        "reason": "Simulated block reduces C2 risk after the destination is known (already inspected; diminishing returns) (containment already simulated); high attack belief favors simulated containment",
+        "belief": {
+          "normal": 0.001,
+          "suspicious_execution": 0.924,
+          "persistence": 0.009,
+          "credential_access": 0.006,
+          "lateral_movement": 0.004,
+          "command_and_control": 0.049,
+          "compromised": 0.007
+        }
+      },
+      {
+        "index": 3,
+        "type": "ProcessEvent",
+        "ml_risk": 0.942,
+        "rules": [
+          "Encoded command or in-line download behavior",
+          "Multiple attack stages in one trajectory"
+        ],
+        "action": "block_connection_simulated",
+        "reason": "Simulated block reduces C2 risk after the destination is known (already inspected; diminishing returns) (containment already simulated); high attack belief favors simulated containment",
+        "belief": {
+          "normal": 0.0,
+          "suspicious_execution": 0.964,
+          "persistence": 0.003,
+          "credential_access": 0.002,
+          "lateral_movement": 0.001,
+          "command_and_control": 0.025,
+          "compromised": 0.006
+        }
+      },
+      {
+        "index": 4,
+        "type": "ProcessEvent",
+        "ml_risk": 0.98,
+        "rules": [
+          "Credential-access tool or artifact",
+          "Admin tool launched from an unusual parent"
+        ],
+        "action": "block_connection_simulated",
+        "reason": "Simulated block reduces C2 risk after the destination is known (already inspected; diminishing returns) (containment already simulated); high attack belief favors simulated containment",
+        "belief": {
+          "normal": 0.0,
+          "suspicious_execution": 0.982,
+          "persistence": 0.001,
+          "credential_access": 0.003,
+          "lateral_movement": 0.001,
+          "command_and_control": 0.009,
+          "compromised": 0.004
+        }
+      },
+      {
+        "index": 5,
+        "type": "FileEvent",
+        "ml_risk": 0.989,
+        "rules": [
+          "Credential-access tool or artifact",
+          "Multiple attack stages in one trajectory"
+        ],
+        "action": "block_connection_simulated",
+        "reason": "Simulated block reduces C2 risk after the destination is known (already inspected; diminishing returns) (containment already simulated); high attack belief favors simulated containment",
+        "belief": {
+          "normal": 0.0,
+          "suspicious_execution": 0.962,
+          "persistence": 0.001,
+          "credential_access": 0.007,
+          "lateral_movement": 0.001,
+          "command_and_control": 0.008,
+          "compromised": 0.022
+        }
+      },
+      {
+        "index": 6,
+        "type": "ProcessEvent",
+        "ml_risk": 0.978,
+        "rules": [
+          "Remote access after credential indicators",
+          "Temporary file followed by interpreter execution",
+          "Admin tool launched from an unusual parent",
+          "Multiple attack stages in one trajectory"
+        ],
+        "action": "block_connection_simulated",
+        "reason": "Simulated block reduces C2 risk after the destination is known (already inspected; diminishing returns) (containment already simulated); high attack belief favors simulated containment",
+        "belief": {
+          "normal": 0.0,
+          "suspicious_execution": 0.968,
+          "persistence": 0.0,
+          "credential_access": 0.001,
+          "lateral_movement": 0.001,
+          "command_and_control": 0.001,
+          "compromised": 0.029
+        }
+      },
+      {
+        "index": 7,
+        "type": "AuthEvent",
+        "ml_risk": 0.427,
+        "rules": [
+          "Remote access after credential indicators"
+        ],
+        "action": "block_connection_simulated",
+        "reason": "Simulated block reduces C2 risk after the destination is known (already inspected; diminishing returns) (containment already simulated); high attack belief favors simulated containment",
+        "belief": {
+          "normal": 0.0,
+          "suspicious_execution": 0.938,
+          "persistence": 0.0,
+          "credential_access": 0.001,
+          "lateral_movement": 0.002,
+          "command_and_control": 0.001,
+          "compromised": 0.058
+        }
+      }
+    ],
+    "final_belief": {
+      "normal": 0.0,
+      "suspicious_execution": 0.938,
+      "persistence": 0.0,
+      "credential_access": 0.001,
+      "lateral_movement": 0.002,
+      "command_and_control": 0.001,
+      "compromised": 0.058
+    },
+    "predicted_next": [
+      [
+        "command_and_control",
+        0.9953563676955783
+      ],
+      [
+        "credential_access",
+        0.9409871222539185
+      ],
+      [
+        "persistence",
+        0.9390815703108705
+      ]
+    ],
+    "paths": [
+      [
+        "WINWORD.EXE",
+        "host-01"
+      ],
+      [
+        "WINWORD.EXE",
+        "powershell.exe"
+      ],
+      [
+        "WINWORD.EXE",
+        "powershell.exe",
+        "powershell.exe"
+      ],
+      [
+        "WINWORD.EXE",
+        "powershell.exe",
+        "procdump.exe"
+      ],
+      [
+        "WINWORD.EXE",
+        "powershell.exe",
+        "psexec.exe"
+      ]
+    ]
+  },
+  "resource_usage": {
+    "user_cpu_seconds": 4.078323,
+    "max_rss_mb": 209.0703125
+  }
+}

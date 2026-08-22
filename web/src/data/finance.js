@@ -28,6 +28,17 @@ export const PRICING = [
   { sku: "Ledger add-on", price: "$0.75", unit: "/endpoint/mo", who: "Ransom / file-seal", acv: "on top of Core" },
 ];
 
+/** Typical public list, 2025–26. Not a vendor quote. Monthly $ / PC (or / user for Defender). */
+export const AV_COMPARE = [
+  { label: "Defender P1 · native AV", monthly: 3.0, color: "#8aa0b5", note: "$3/user/mo list" },
+  { label: "Defender P2 · EDR", monthly: 5.2, color: "#6b8aa3", note: "$5.20/user/mo list" },
+  { label: "Falcon Go · AV-ish", monthly: 5.0, color: "#e09a1a", note: "$60/device/yr" },
+  { label: "Falcon Enterprise", monthly: 15.4, color: "#c47f10", note: "$185/device/yr" },
+  { label: "SentinelOne Complete", monthly: 15.0, color: "#8b5cf6", note: "~$180/ep/yr" },
+  { label: "Our overlay (add-on)", monthly: 3.0, color: "#0c9a62", note: "sits on their AV" },
+  { label: "Keep Defender + us", monthly: 6.0, color: "#14b87a", note: "P1 + $3 incremental" },
+];
+
 export const YEARS = ["Y1", "Y2", "Y3"];
 
 export const TRACTION = {

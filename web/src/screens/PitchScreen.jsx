@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { HorzBars, PALETTE, ScatterPlot } from "../components/PitchCharts.jsx";
-import { MARKET } from "../data/finance";
+import { AV_COMPARE, MARKET } from "../data/finance";
 
 const SLIDES = [
   "title",
@@ -410,39 +410,63 @@ function Samsom() {
 function Biz() {
   return (
     <section className="slide">
-      <p className="kicker">Business model · how money shows up</p>
-      <h2>We sell a layer and minutes back. Not a new agent.</h2>
-      <div className="tri">
-        <article className="ours">
-          <em>Overlay Core</em>
-          <h3>$3 / PC / month</h3>
-          <p>Ananya’s 220 PCs ≈ $8k a year. A 500-PC shop ≈ $18k. Coffee vs a burnt-out Tier-1.</p>
-        </article>
-        <article>
-          <em>MSSP wholesale</em>
-          <h3>$1.50 / PC / month</h3>
-          <p>Rahul’s twelve tenants, one brain. He resells minutes. We do not steal his logo.</p>
-        </article>
-        <article>
-          <em>Ledger add-on</em>
-          <h3>$0.75 / PC / month</h3>
-          <p>Meera and Vikram: sealed hashes, dummy-ransom proof, a sentence for the auditor.</p>
-        </article>
+      <p className="kicker">Business model · vs native AV</p>
+      <h2>A second full EDR is $8–20 / PC. We are $3 on the AV they already bought.</h2>
+      <div className="split charts">
+        <HorzBars
+          title="Typical list · $ / PC / month"
+          rows={AV_COMPARE.map((row) => ({
+            label: row.label,
+            value: row.monthly,
+            color: row.color,
+            note: `$${row.monthly.toFixed(row.monthly % 1 ? 1 : 0)} · ${row.note}`,
+          }))}
+        />
+        <div className="tri tight">
+          <article className="ours">
+            <em>Overlay Core</em>
+            <h3>$3 / PC / month</h3>
+            <p>Ananya’s 220 PCs ≈ $8k a year. 500 PCs ≈ $18k — the incremental line, not a rip.</p>
+          </article>
+          <article>
+            <em>MSSP wholesale</em>
+            <h3>$1.50 / PC / month</h3>
+            <p>Rahul resells minutes. Native AV stays his customer’s SKU.</p>
+          </article>
+          <article>
+            <em>Ledger add-on</em>
+            <h3>$0.75 / PC / month</h3>
+            <p>Sealed hashes for Meera and Vikram. On top of Core, not instead of Defender.</p>
+          </article>
+        </div>
       </div>
       <div className="tri tight">
         <article>
-          <em>What we never sell</em>
-          <p>A rip-and-replace of Defender. A 40-person SOC. A token. A fear newsletter.</p>
+          <em>Native AV they keep</em>
+          <p>
+            Defender P1 ~$3/user/mo. Falcon Go ~$5/PC/mo. Fine as a bouncer. Still blind on packed
+            Photos. Still toast-screams if they buy the loud EDR tier.
+          </p>
         </article>
         <article>
-          <em>Why they pay</em>
-          <p>Fewer dumb tickets + a story they can repeat. Packed CLEAN stops being a board ambush.</p>
+          <em>Native EDR they might rip to</em>
+          <p>
+            Falcon Enterprise ~$15/PC/mo list ($185/yr). SentinelOne Complete similar. 500 PCs ≈
+            $90k/year — and they still pay humans to say “not a fire.”
+          </p>
         </article>
         <article className="ours">
-          <em>Shape of the business</em>
-          <p>Software margin (~75%), not an MDR body shop. Same feed they already collect.</p>
+          <em>The honest stack</em>
+          <p>
+            Keep Defender (often already in M365). Add us. ~$6/PC if P1 is on the bill, or +$3 if
+            E5 already ate Defender. Cheaper than a second agent war.
+          </p>
         </article>
       </div>
+      <p className="fine">
+        List ranges 2025–26 (Microsoft P1 $3 / P2 $5.20 per user/mo; CrowdStrike Go $60/yr, Enterprise
+        $185/yr; S1 Complete ~$180/yr). Volume quotes are lower. Hidden cost is still the $20–45 look.
+      </p>
     </section>
   );
 }

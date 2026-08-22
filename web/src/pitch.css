@@ -95,7 +95,29 @@
 }
 .chart svg { width: 100%; height: auto; display: block; }
 .chart .grid { stroke: #244033; fill: none; stroke-width: 1; }
+.chart .grid.faint { opacity: 0.35; }
 .chart .axis { fill: var(--muted); font-size: 9px; }
+.dot-name { fill: #c5ddd0; font-size: 10px; }
+.dot-name.ours { fill: #3ee0a0; font-weight: 700; }
+.trl { display: grid; gap: 10px; }
+.trl article {
+  background: #0c1410;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.trl-top { display: flex; justify-content: space-between; gap: 12px; }
+.trl-top span { color: var(--ns); font-size: 12px; }
+.trl b {
+  display: block;
+  height: 8px;
+  background: #1a201c;
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+.trl i { display: block; height: 100%; background: var(--ns); }
+.trl p { margin: 0; color: #b7cfc2; font-size: 13px; }
 .legend {
   display: flex;
   flex-wrap: wrap;

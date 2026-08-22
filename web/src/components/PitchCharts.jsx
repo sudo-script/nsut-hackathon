@@ -162,6 +162,43 @@ export function Radar({ title, axes, series, size = 260 }) {
   );
 }
 
+export function ScatterPlot({ title, xLabel, yLabel, points }) {
+  const w = 420;
+  const h = 280;
+  const p = { l: 48, r: 18, t: 18, b: 36 };
+  const iw = w - p.l - p.r;
+  const ih = h - p.t - p.b;
+  const xy = (x, y) => [p.l + (x / 10) * iw, p.t + ih - (y / 10) * ih];
+  return (
+    <figure className="chart scatter">
+      {title && <figcaption>{title}</figcaption>}
+      <svg viewBox={`0 0 ${w} ${h}`} role="img" aria-label={title || "comparison"}>
+        <line x1={p.l} y1={p.t + ih} x2={p.l + iw} y2={p.t + ih} className="grid" />
+        <line x1={p.l} y1={p.t} x2={p.l} y2={p.t + ih} className="grid" />
+        <line x1={p.l + iw / 2} y1={p.t} x2={p.l + iw / 2} y2={p.t + ih} className="grid faint" />
+        <line x1={p.l} y1={p.t + ih / 2} x2={p.l + iw} y2={p.t + ih / 2} className="grid faint" />
+        <text x={p.l + iw / 2} y={h - 6} className="axis" textAnchor="middle">
+          {xLabel}
+        </text>
+        <text x="14" y={p.t + ih / 2} className="axis" textAnchor="middle" transform={`rotate(-90 14 ${p.t + ih / 2})`}>
+          {yLabel}
+        </text>
+        {points.map((pt) => {
+          const [x, y] = xy(pt.x, pt.y);
+          return (
+            <g key={pt.name}>
+              <circle cx={x} cy={y} r={pt.ours ? 11 : 8} fill={pt.color} />
+              <text x={x} y={y - (pt.ours ? 16 : 13)} className={`dot-name ${pt.ours ? "ours" : ""}`} textAnchor="middle">
+                {pt.name}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </figure>
+  );
+}
+
 export function Legend({ items }) {
   return (
     <ul className="legend">

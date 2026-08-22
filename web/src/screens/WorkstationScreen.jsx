@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { HostAppWindow } from "../components/HostApps.jsx";
 import { DESKTOP_FILES } from "../data/workstation";
 import { applyThresholds, loadCampaign } from "../lib/campaigns";
 
@@ -20,6 +21,7 @@ export default function WorkstationScreen() {
   const [blocked, setBlocked] = useState({});
   const [processes, setProcesses] = useState([]);
   const [packets, setPackets] = useState([]);
+  const [openApps, setOpenApps] = useState([]);
   const timer = useRef(null);
 
   const campaign = useMemo(() => {
@@ -36,9 +38,9 @@ export default function WorkstationScreen() {
     if (biosStep >= BIOS_STEPS.length) {
       timer.current = setTimeout(() => {
         setPhase("sandbox");
-        if (selected.localOnly) {
-          setProcesses([{ name: "WINWORD.EXE", title: "notes.docx" }]);
-          setTimeout(() => finishRun(selected, true), 1600);
+        if (selected.localOnly || selected.app) {
+          setProcesses([{ name: selected.processName || "app.exe", title: selected.name }]);
+          setTimeout(() => finishRun(selected, selected.promote === "allow"), selected.app ? 1400 : 1600);
         } else {
           setFrameIndex(0);
         }
@@ -90,8 +92,14 @@ export default function WorkstationScreen() {
 
   function finishRun(file, allow) {
     setPhase(allow ? "allowed" : "blocked");
-    if (allow) setPromoted((prev) => ({ ...prev, [file.id]: true }));
-    else setBlocked((prev) => ({ ...prev, [file.id]: true }));
+    if (allow) {
+      setPromoted((prev) => ({ ...prev, [file.id]: true }));
+      if (file.app) {
+        setOpenApps((prev) => (prev.some((item) => item.id === file.id) ? prev : [...prev, file]));
+      }
+    } else {
+      setBlocked((prev) => ({ ...prev, [file.id]: true }));
+    }
   }
 
   const decision =
@@ -114,7 +122,7 @@ export default function WorkstationScreen() {
               {DESKTOP_FILES.map((file) => (
                 <button
                   key={file.id}
-                  className={`win-icon ${promoted[file.id] ? "cleared" : ""} ${blocked[file.id] ? "quarantined" : ""}`}
+                  className={`win-icon ${file.promote === "allow" ? "safe" : "unsafe"} ${promoted[file.id] ? "cleared" : ""} ${blocked[file.id] ? "quarantined" : ""}`}
                   onDoubleClick={() => openFile(file)}
                   onClick={() => openFile(file)}
                 >
@@ -122,14 +130,31 @@ export default function WorkstationScreen() {
                     {file.icon}
                   </span>
                   <em>{file.name}</em>
-                  {promoted[file.id] && <small>cleared</small>}
-                  {blocked[file.id] && <small className="bad">blocked</small>}
+                  <small className={file.promote === "allow" ? "" : "bad"}>
+                    {promoted[file.id]
+                      ? "running"
+                      : blocked[file.id]
+                        ? "blocked"
+                        : file.promote === "allow"
+                          ? "safe"
+                          : "dummy malware"}
+                  </small>
                 </button>
               ))}
             </div>
 
-            {(phase === "sandbox" || phase === "blocked" || phase === "allowed") && selected && (
-              <div className={`vm-window ${phase === "blocked" ? "hot" : ""} ${phase === "allowed" ? "ok" : ""}`}>
+            {phase === "allowed" &&
+              openApps.map((file, index) => (
+                <HostAppWindow
+                  key={file.id}
+                  file={file}
+                  offset={index}
+                  onClose={() => setOpenApps((prev) => prev.filter((item) => item.id !== file.id))}
+                />
+              ))}
+
+            {(phase === "sandbox" || phase === "blocked") && selected && (
+              <div className={`vm-window ${phase === "blocked" ? "hot" : ""}`}>
                 <div className="vm-title">
                   <span>SANDBOX — Windows 11 (isolated)</span>
                   <span className="vm-tag">no host disk · no host NIC · snapshot</span>
@@ -146,7 +171,7 @@ export default function WorkstationScreen() {
                   <div className="vm-event">
                     <p className="vm-kicker">{frame?.stage || selected.specimen || "preview"}</p>
                     <h3>{frame?.title || selected.name}</h3>
-                    <p>{frame?.narrative || "Signed document preview. No implant chain."}</p>
+                    <p>{frame?.narrative || selected.sandboxNote || "Signed document preview. No implant chain."}</p>
                     {frame?.stolen_name && <p className="steal">SANDBOX COPY: {frame.stolen_name}</p>}
                   </div>
                 </div>
@@ -181,7 +206,14 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
             <div className="win-taskbar">
               <span className="start">⊞</span>
               <span className="pill">alice-pc · MAIN OS</span>
-              {selected && <span className="pill dim">{selected.name}</span>}
+              {openApps.map((file) => (
+                <span key={file.id} className="pill">
+                  {file.windowTitle || file.name}
+                </span>
+              ))}
+              {selected && !openApps.some((file) => file.id === selected.id) && (
+                <span className="pill dim">{selected.name}</span>
+              )}
               <span className="clock">11:24 AM</span>
             </div>
           </div>
@@ -230,7 +262,7 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
             )}
           </BackendCard>
 
-          <BackendCard title="World model + XGBoost" tone={frame?.ns_alert ? "hot" : frame ? "live" : ""}>
+          <BackendCard title="World model + XGBoost" tone={frame?.ns_alert ? "hot" : frame || selected?.promote === "allow" ? "live" : ""}>
             {frame ? (
               <>
                 <Row k="XGBoost" v={frame.ml_risk.toFixed(2) + (frame.ml_alert ? " ALERT" : "")} warn={frame.ml_alert} />
@@ -242,6 +274,13 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
                   ))}
                 </ul>
               </>
+            ) : selected?.promote === "allow" && phase !== "idle" ? (
+              <>
+                <Row k="XGBoost" v="0.04 quiet" />
+                <Row k="NS score" v="normal · no attack stage" />
+                <Row k="Action" v="do_nothing" />
+                <p>Signed allow-listed app. No rare outbound, no script spawn from Office.</p>
+              </>
             ) : (
               <p>Detectors attach after firmware hands the file to the sandbox.</p>
             )}
@@ -249,7 +288,13 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
 
           <div className={`sec-verdict ${phase}`}>
             <strong>{decision}</strong>
-            {phase === "allowed" && <p>Promoted to the main desktop with a cleared badge. Host still did not run the raw first copy.</p>}
+            {phase === "allowed" && (
+              <p>
+                {selected?.app
+                  ? `${selected.windowTitle || selected.name} is open on the host. Draw, type, or click — this binary was signed, hashed, and sandbox-tested.`
+                  : "Promoted to the main desktop. Host still did not run the raw first copy."}
+              </p>
+            )}
             {phase === "blocked" && <p>Main OS never received an executable mapping. Snapshot can be discarded.</p>}
           </div>
         </aside>

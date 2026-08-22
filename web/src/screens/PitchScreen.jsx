@@ -452,6 +452,7 @@ function Gtm() {
     <section className="slide">
       <p className="kicker">Go to market · no mystery</p>
       <h2>Show the two movies. Then sell the overlay.</h2>
+      <GtmGraphic />
       <div className="tri">
         <article>
           <em>Door 1</em>
@@ -479,6 +480,60 @@ function Gtm() {
         </article>
       </div>
     </section>
+  );
+}
+
+function GtmGraphic() {
+  return (
+    <figure className="gtm-art" aria-label="Two doors into a live demo, then the overlay sale">
+      <svg viewBox="0 0 960 220" role="img">
+        <text x="88" y="22" className="gtm-cap">Door 1</text>
+        <rect x="24" y="32" width="128" height="150" rx="10" className="gtm-door soc" />
+        <rect x="40" y="48" width="96" height="118" rx="6" className="gtm-panel" />
+        <circle cx="88" cy="88" r="16" className="gtm-face" />
+        <path d="M72 128c8 14 24 14 32 0" className="gtm-line" />
+        <text x="88" y="168" className="gtm-label">Ananya</text>
+        <text x="88" y="196" className="gtm-sub">SOC · 220 PCs</text>
+
+        <text x="280" y="22" className="gtm-cap">Door 2</text>
+        <rect x="216" y="32" width="128" height="150" rx="10" className="gtm-door mssp" />
+        <rect x="232" y="48" width="96" height="118" rx="6" className="gtm-panel" />
+        <circle cx="280" cy="80" r="14" className="gtm-face gold" />
+        {[0, 1, 2, 3].map((i) => (
+          <rect key={i} x={242 + (i % 2) * 34} y={108 + Math.floor(i / 2) * 22} width="28" height="16" rx="3" className="gtm-tenant" />
+        ))}
+        <text x="280" y="168" className="gtm-label">Rahul</text>
+        <text x="280" y="196" className="gtm-sub">MSSP · 12 tenants</text>
+
+        <path d="M162 108h40" className="gtm-arrow" />
+        <path d="M354 108h40" className="gtm-arrow" />
+        <polygon points="200,108 190,103 190,113" className="gtm-head" />
+        <polygon points="392,108 382,103 382,113" className="gtm-head" />
+
+        <text x="532" y="22" className="gtm-cap">The two movies</text>
+        <rect x="404" y="36" width="256" height="148" rx="12" className="gtm-screen" />
+        <rect x="418" y="50" width="110" height="88" rx="8" className="gtm-win hot" />
+        <text x="473" y="88" className="gtm-mini">Photos</text>
+        <text x="473" y="106" className="gtm-mini dim">AV CLEAN</text>
+        <rect x="536" y="50" width="110" height="88" rx="8" className="gtm-win ok" />
+        <text x="591" y="80" className="gtm-mini">LOCK-NOTE</text>
+        <text x="591" y="98" className="gtm-mini dim">write</text>
+        <text x="591" y="116" className="gtm-mini ok">DENIED</text>
+        <text x="532" y="168" className="gtm-label">Live demo is the close</text>
+        <text x="532" y="196" className="gtm-sub">If this flops, stop talking</text>
+
+        <path d="M670 108h44" className="gtm-arrow" />
+        <polygon points="712,108 702,103 702,113" className="gtm-head" />
+
+        <text x="820" y="22" className="gtm-cap">Then the layer</text>
+        <rect x="724" y="36" width="212" height="148" rx="12" className="gtm-sale" />
+        <text x="830" y="78" className="gtm-price">$3</text>
+        <text x="830" y="100" className="gtm-sub">/ PC / month · SOC</text>
+        <text x="830" y="132" className="gtm-price sm">$1.50</text>
+        <text x="830" y="154" className="gtm-sub">wholesale · MSSP</text>
+        <text x="830" y="186" className="gtm-sub">+$0.75 ledger if they want seals</text>
+      </svg>
+    </figure>
   );
 }
 

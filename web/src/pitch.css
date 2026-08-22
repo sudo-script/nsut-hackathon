@@ -309,6 +309,38 @@
   border-radius: 0 10px 10px 0;
 }
 .close-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 22px; }
+.gtm-art {
+  margin: 0 0 14px;
+  background: #fff;
+  border: 2px solid #1c2430;
+  border-radius: 14px;
+  padding: 8px 10px 2px;
+  box-shadow: 4px 4px 0 #1c2430;
+}
+.gtm-art svg { width: 100%; height: auto; display: block; }
+.gtm-door { stroke: #1c2430; stroke-width: 2; }
+.gtm-door.soc { fill: #d8f5e7; }
+.gtm-door.mssp { fill: #ffe7c2; }
+.gtm-panel { fill: #fffaf2; stroke: #1c2430; stroke-width: 1.5; }
+.gtm-face { fill: #1c2430; }
+.gtm-face.gold { fill: #e09a1a; }
+.gtm-line { fill: none; stroke: #1c2430; stroke-width: 2; }
+.gtm-tenant { fill: #fff; stroke: #1c2430; stroke-width: 1.2; }
+.gtm-screen { fill: #1c2430; }
+.gtm-win { stroke: #fff; stroke-width: 1.5; }
+.gtm-win.hot { fill: #3a1515; }
+.gtm-win.ok { fill: #143326; }
+.gtm-sale { fill: #e7faf1; stroke: #0c9a62; stroke-width: 2; }
+.gtm-cap { fill: #0c9a62; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; text-anchor: middle; font-weight: 700; }
+.gtm-label { fill: #1c2430; font-size: 13px; font-weight: 700; text-anchor: middle; }
+.gtm-sub { fill: #5c6a78; font-size: 10px; text-anchor: middle; }
+.gtm-mini { fill: #fff; font-size: 11px; font-weight: 700; text-anchor: middle; }
+.gtm-mini.dim { fill: #c9d6e2; font-weight: 500; }
+.gtm-mini.ok { fill: #3ee0a0; }
+.gtm-price { fill: #0c6b44; font-size: 28px; font-weight: 800; text-anchor: middle; }
+.gtm-price.sm { font-size: 22px; }
+.gtm-arrow { stroke: #1c2430; stroke-width: 2.5; }
+.gtm-head { fill: #1c2430; }
 .deck-bar {
   display: flex;
   align-items: center;

@@ -82,6 +82,8 @@ npm run build        # static files in web/dist — upload this folder
 
 On Vercel or Netlify, set the project root to `web`. The UI is the same dummy-campaign lab (recon, footprinting, simulated pentest, data theft) racing XGBoost against the world model. Detector traces are baked into `web/src/data/campaigns.json`, so hosting does not need Flask or Python.
 
+**Railway:** this repo looks like Python (`requirements.txt`), which is why a default deploy failed with “No start command detected.” The branch now has `railpack.json` (`provider: node`), a root `package.json` that builds `web/`, and `server.mjs` that serves `web/dist` on `$PORT`. Redeploy this branch as-is. Do not leave Root Directory empty without those files.
+
 Optional local Python server (same lab, live model): `python -m demo.app --host 127.0.0.1 --port 5050`
 
 `data/processed/results.json` holds the seven-test comparison. `data/processed/dashboard.html` shows one reconstructed chain:

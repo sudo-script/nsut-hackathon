@@ -52,6 +52,14 @@ npm run build
 
 Publish the contents of `dist` (Actions or the `gh-pages` branch). `vite.config.js` uses `base: "./"` so it works in a subdirectory.
 
+## Railway
+
+The repo root is a Python research project, so Railway must be told to serve the React lab.
+
+This branch already includes `railpack.json` (`provider: node`) and `node server.mjs`. Redeploy the same service from `cursor/neurosymbolic-security-world-model-6004`. Do **not** set a Root Directory of `/` without that file — Railpack will detect Python and fail.
+
+If you instead set Railway **Root Directory** to `web`, Railpack detects Vite and uses `npm run build` / `npm start` there.
+
 ## Regenerating detector traces
 
 If you change the Python world model:

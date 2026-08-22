@@ -1,0 +1,11 @@
+[project]
+name = "security-world-model"
+version = "0.1.0"
+description = "Neuro-symbolic world models and active inference for endpoint security"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

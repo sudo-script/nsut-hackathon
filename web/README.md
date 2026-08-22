@@ -4,6 +4,7 @@ Static Vite + React app with two screens:
 
 1. **Sandbox workstation** — fake Windows desktop. Classic AV (scan-time + run-time) can miss a packed dummy (`PhotoViewer.crypt.exe`). After AV says CLEAN, Photos opens like a normal app (click through vacation pictures). The neuro-symbolic path still watches the unpack and blocks host persist. Safe apps (Paint, Notepad, Calculator) still open after they clear.
 2. **Campaign lab** — network-map race of dummy specimens vs the two detectors.
+3. **Pitch deck** — slide comparison of classic AV, ML-based AV, and the neuro-symbolic layer (cost, business, use cases). Arrow keys or **Print / PDF**.
 
 No Python server is required to host it. The firmware gate is a **UI simulation**, not real BIOS/UEFI control.
 

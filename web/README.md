@@ -5,7 +5,7 @@ Static Vite + React app with two screens:
 1. **Sandbox workstation** — fake Windows desktop. Classic AV (scan-time + run-time) can miss a packed dummy (`PhotoViewer.crypt.exe`). After AV says CLEAN, Photos opens like a normal app (click through vacation pictures). The neuro-symbolic path still watches the unpack and blocks host persist. Safe apps (Paint, Notepad, Calculator) still open after they clear.
 2. **Campaign lab** — network-map race of dummy specimens vs the two detectors.
 3. **BIOS ledger** — split-screen dummy ransom. File hashes are committed on a permissioned lab blockchain (content-addressed `prev` links + merkle seals + 6-peer 2/3 quorum). Left PC has no replica (visual lock only). Right PC gossips each write and DENYs unsigned writers. No real encryption, no cryptocurrency, no real BIOS.
-4. **Pitch deck** — 13 slides: radar + bar + donut charts, side-by-side comparison, buyer demographics (personas, industry mix, SOC roles), cost, and GTM. Arrow keys or **Print / PDF**.
+4. **Pitch deck** — 18 slides including a startup financial model (TAM/SAM/SOM, SKUs, 3-year P&L, LTV/CAC, $1.6M seed). Sources on the market slide. Arrow keys or **Print / PDF**.
 
 No Python server is required to host it. The firmware gate and authority ledger are **UI simulations**, not real BIOS/UEFI or blockchain control.
 

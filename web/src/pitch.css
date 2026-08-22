@@ -197,6 +197,9 @@
 .metrics small { color: var(--muted); font-size: 11px; }
 .metrics strong { font-size: 22px; }
 .metrics .win strong { color: var(--ns); }
+.metrics article p { margin: 6px 0 0; color: #b7cfc2; font-size: 12px; }
+.cmp.fin small { color: var(--muted); }
+.cmp tr.sum th, .cmp tr.sum td { font-weight: 700; }
 .cost-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
 .cost-grid .big { grid-column: 1 / -1; }
 .cost-grid .big h3 { font-size: 28px; margin: 4px 0 10px; }

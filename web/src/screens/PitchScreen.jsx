@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Donut, GroupedBars, HorzBars, PALETTE, Radar } from "../components/PitchCharts.jsx";
+import { MarketSlide, ModelSlide, PricingSlide, RaiseSlide, UnitSlide } from "./pitchFinance.jsx";
 
 const SLIDES = [
   "title",
@@ -14,6 +15,11 @@ const SLIDES = [
   "usecases",
   "stack",
   "gtm",
+  "market",
+  "pricing",
+  "model",
+  "unit",
+  "raise",
   "close",
 ];
 
@@ -666,8 +672,8 @@ function Close() {
         </article>
       </div>
       <p className="lede short">
-        Next: sandbox workstation → PhotoViewer.crypt.exe, then the campaign lab to watch both
-        detectors race.
+        Seed ask $1.6M. Next in the lab: PhotoViewer.crypt.exe, the BIOS ledger dummy ransom, then
+        the campaign race.
       </p>
     </section>
   );
@@ -686,5 +692,10 @@ const SLIDE_VIEWS = {
   usecases: UseCases,
   stack: Stack,
   gtm: Gtm,
+  market: MarketSlide,
+  pricing: PricingSlide,
+  model: ModelSlide,
+  unit: UnitSlide,
+  raise: RaiseSlide,
   close: Close,
 };

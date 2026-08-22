@@ -61,7 +61,7 @@ def _is_alert(belief: dict[str, float], ml_risk: float, *, neuro: bool) -> bool:
             belief.get("command_and_control", 0.0),
             belief.get("compromised", 0.0),
         ]
-        return max(attack_states) >= 0.28 or belief.get("compromised", 0.0) >= 0.22
+        return max(attack_states) >= 0.24 or belief.get("compromised", 0.0) >= 0.20
     return ml_risk >= 0.50
 
 
@@ -90,9 +90,11 @@ class SecurityPipeline:
             update_belief(result.belief, match.evidence)
 
         action = select_action(result.belief, result.world)
+        action_key = action.action.action_type.value
         if action.action.action_type != ActionType.DO_NOTHING:
-            result.world.inspected.add(action.action.action_type.value)
-            result.investigations += 1
+            if action_key not in result.world.inspected:
+                result.investigations += 1
+            result.world.inspected.add(action_key)
         if action.action.containment:
             result.containment_actions += 1
         if action.action.action_type == ActionType.INCREASE_MONITORING:

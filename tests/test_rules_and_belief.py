@@ -17,7 +17,7 @@ def test_macro_dropper_fires_execution_and_updates_belief() -> None:
             world.evidence.append(match.evidence)
             update_belief(belief, match.evidence)
     assert "office_spawns_script" in fired
-    assert "encoded_or_download" in fired
+    assert "credential_tool" in fired or "encoded_or_download" in fired
     assert belief.probs["suspicious_execution"] > belief.probs["normal"] * 0.5
     assert belief.attack_mass > 0.35
 

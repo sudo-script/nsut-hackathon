@@ -20,7 +20,7 @@ Process + Network Events
       Risk Score      Event Graph
                            |
                            v
-                     19 Symbolic Rules
+                     21 Symbolic Rules
                            |
                            v
                        Belief State
@@ -52,7 +52,7 @@ collector/           event schemas, normalizer, shared feature builder
 data/                synthetic sequence generator and JSONL loader
 baseline/            XGBoost, Random Forest, MLP
 world_model/         entities, temporal graph, belief updates
-reasoning/           19 behavioral rules and stage inference
+reasoning/           21 behavioral rules and stage inference
 active_inference/    action set, Score(a) = IG + risk reduction − cost
 experiments/         seven evaluation tests + run_all
 evaluation/          metrics and plots
@@ -125,8 +125,23 @@ Cheap inspections are preferred while the belief is uncertain; simulated contain
 
 Synthetic families encode behavior, not samples: macro-like document → script → C2 → credential access → lateral movement; LOLBin-like persistence; periodic rare outbound “beacon” behavior; and a weak-signal chain.
 
-## Success criteria (V1)
+## Results on the controlled simulator
 
-The prototype is successful if, on this controlled corpus, it shows competitive recall versus the ML baseline, lower false positives on contextual benign work, fewer events to detect multi-stage chains, fewer deep investigations, a reconstructable attack graph, and non-trivial next-stage prediction.
+Latest `python -m experiments.run_all` run (seed 7). These numbers support the architecture on **simulated** trajectories; they are not a claim about real malware.
+
+| Test | ML baseline (XGBoost) | Neuro-symbolic world model |
+|---|---|---|
+| 1 Classification F1 | 0.87 | **0.99** |
+| 1 False-positive rate | 0.08 | **0.00** |
+| 2 Unseen-family F1 (`family_beacon`) | 0.62 | **1.00** |
+| 3 Mean events to detection | 1.75 | **1.00** |
+| 3 Mean time to detection | 270s | **0s** |
+| 4 Weak-signal F1 | 0.62 | **1.00** |
+| 5 Contextual benign FPR | 0.37 | **0.00** |
+| 6 Deep investigations | 358 | **128** (−64%) |
+| 7 Top-3 next-stage accuracy | — | **1.00** |
+| 7 Attack-path reconstruction | — | **1.00** |
+
+The world model matches or beats event-level recall, uses context rules to avoid alerting on admin/dev/backup/scan work, connects early behavioral stages before a strong per-event score appears, and investigates only when the policy expects information or risk reduction.
 
 See `docs/neurosymbolic_active_inference_network_security_plan.md` for the full research plan.

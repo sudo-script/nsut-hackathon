@@ -61,6 +61,9 @@ def _cmdline(event) -> str:
     return event.command_line if isinstance(event, ProcessEvent) else ""
 
 
+BROWSERS = {"msedge.exe", "chrome.exe", "firefox.exe", "iexplore.exe"}
+
+
 def rule_office_spawns_script(state: WorldState, index: int) -> Evidence | None:
     event = state.events[index]
     if not isinstance(event, ProcessEvent):
@@ -72,6 +75,40 @@ def rule_office_spawns_script(state: WorldState, index: int) -> Evidence | None:
     return Evidence(
         "office_spawns_script",
         _lr(normal=0.35, suspicious_execution=3.4, compromised=1.4),
+        "rule",
+        index,
+    )
+
+
+def rule_browser_spawns_script(state: WorldState, index: int) -> Evidence | None:
+    event = state.events[index]
+    if not isinstance(event, ProcessEvent):
+        return None
+    if event.process_name.lower() not in SCRIPT_INTERPRETERS:
+        return None
+    parent = state.graph.process_name(event.parent_process_id).lower()
+    if parent not in BROWSERS:
+        return None
+    return Evidence(
+        "browser_spawns_script",
+        _lr(normal=0.40, suspicious_execution=3.0, command_and_control=1.4),
+        "rule",
+        index,
+    )
+
+
+def rule_executed_from_temp(state: WorldState, index: int) -> Evidence | None:
+    event = state.events[index]
+    if not isinstance(event, ProcessEvent):
+        return None
+    blob = f"{event.process_name} {event.command_line}".lower()
+    if "temp" not in blob and "tmp" not in blob:
+        return None
+    if event.process_name.lower() in DEV_TOOLS | BACKUP_TOOLS | SCANNER_TOOLS:
+        return None
+    return Evidence(
+        "executed_from_temp",
+        _lr(normal=0.40, suspicious_execution=3.3, persistence=1.4),
         "rule",
         index,
     )
@@ -408,7 +445,13 @@ def rule_chain_progression(state: WorldState, index: int) -> Evidence | None:
     """Several distinct attack stages in one process tree raise compromise belief."""
     names = {item.name for item in state.evidence}
     stages = 0
-    if names & {"office_spawns_script", "encoded_or_download", "temp_then_execute"}:
+    if names & {
+        "office_spawns_script",
+        "browser_spawns_script",
+        "encoded_or_download",
+        "temp_then_execute",
+        "executed_from_temp",
+    }:
         stages += 1
     if names & {"script_rare_external", "beaconing", "office_child_outbound"}:
         stages += 1
@@ -434,6 +477,8 @@ def rule_chain_progression(state: WorldState, index: int) -> Evidence | None:
 
 RULES: list[tuple[str, str, Callable[[WorldState, int], Evidence | None]]] = [
     ("R01", "Office process spawned a script interpreter", rule_office_spawns_script),
+    ("R01b", "Browser spawned a script interpreter", rule_browser_spawns_script),
+    ("R01c", "Process executed from a temporary path", rule_executed_from_temp),
     ("R02", "Script interpreter reached a rare external destination", rule_script_to_rare_external),
     ("R03", "Encoded command or in-line download behavior", rule_encoded_or_download),
     ("R04", "Persistence path or scheduled task", rule_persistence_write),

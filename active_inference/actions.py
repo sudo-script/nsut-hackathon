@@ -59,13 +59,13 @@ def default_actions() -> list[Action]:
         Action(
             ActionType.BLOCK_CONNECTION,
             "Simulate blocking the current outbound connection",
-            1.40,
+            0.90,
             containment=True,
         ),
         Action(
             ActionType.ISOLATE_ENDPOINT,
             "Simulate isolating the endpoint in the lab",
-            2.20,
+            1.15,
             containment=True,
         ),
     ]

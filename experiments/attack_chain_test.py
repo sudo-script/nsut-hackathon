@@ -17,11 +17,7 @@ def _mean(values: list[float]) -> float:
 def run_attack_chain_test(
     pipeline: SecurityPipeline, test: list[Sequence]
 ) -> dict[str, float]:
-    attacks = [
-        seq
-        for seq in test
-        if seq.is_malicious and seq.family != "family_weak_signal"
-    ]
+    attacks = [seq for seq in test if seq.is_malicious]
     ml_ttd: list[float] = []
     ns_ttd: list[float] = []
     ml_events: list[float] = []

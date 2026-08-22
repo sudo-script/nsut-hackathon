@@ -22,7 +22,7 @@ def neuro_alert(belief: BeliefState) -> bool:
         probs.get("command_and_control", 0.0),
         probs.get("compromised", 0.0),
     )
-    return attack >= 0.28 or probs.get("compromised", 0.0) >= 0.22
+    return attack >= 0.24 or probs.get("compromised", 0.0) >= 0.20
 
 
 def sequence_ml_score(pipeline: SecurityPipeline, sequence: Sequence) -> float:

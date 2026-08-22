@@ -36,9 +36,16 @@ def score_action(action: Action, belief: BeliefState, state: WorldState) -> Acti
     reason = "Default observation"
 
     if action.action_type == ActionType.DO_NOTHING:
-        info = 0.05
+        if attack < 0.22:
+            info = 0.95
+            reason = "Belief remains normal; skip expensive investigation"
+        elif attack < 0.45:
+            info = 0.20
+            reason = "Ambiguous world state; a cheap inspection may still help"
+        else:
+            info = 0.02
+            reason = "Attack belief is already elevated"
         risk = 0.0
-        reason = "No extra telemetry; lowest operational cost"
     elif action.action_type == ActionType.INSPECT_PROCESS_TREE:
         info = 0.85 * uncertainty
         risk = 0.15 * attack
@@ -69,13 +76,29 @@ def score_action(action: Action, belief: BeliefState, state: WorldState) -> Acti
         reason = "Simulated isolation is expensive and reserved for high belief"
 
     if already and action.action_type != ActionType.DO_NOTHING:
-        info *= 0.25
+        info *= 0.15
+        risk *= 0.20
         reason += " (already inspected; diminishing returns)"
+    containment_taken = any(
+        token.endswith("_simulated") or token.startswith("block_") or token.startswith("isolate_")
+        for token in inspected
+    )
+    if containment_taken and action.containment:
+        risk *= 0.10
+        reason += " (containment already simulated)"
 
-    # Do not escalate to containment while beliefs are still ambiguous.
-    if action.containment and attack < 0.55:
-        risk *= 0.25
-        reason += "; containment deferred until attack belief is high"
+    # Once the world model is confident, extra inspections add little and
+    # simulated containment becomes the higher-value action.
+    if attack >= 0.70 and not action.containment and action.action_type != ActionType.DO_NOTHING:
+        info *= 0.30
+        reason += "; inspection value drops after the attack hypothesis is strong"
+    if action.containment:
+        if attack < 0.55:
+            risk *= 0.25
+            reason += "; containment deferred until attack belief is high"
+        else:
+            risk = 1.25 * attack
+            reason += "; high attack belief favors simulated containment"
 
     total = info + risk - action.cost
     return ActionScore(action, info, risk, action.cost, total, reason)

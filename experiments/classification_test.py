@@ -20,8 +20,9 @@ def run_classification_test(
     neuro_event_scores = []
     for sequence in test:
         result = pipeline.run_sequence(sequence)
-        neuro_event_scores.extend([result.belief.attack_mass] * len(sequence.events))
+        for step in result.steps:
+            neuro_event_scores.append(1.0 - step.belief.get("normal", 0.0))
     reports["neuro_symbolic"] = classification_report(
-        labels, neuro_event_scores, threshold=0.35
+        labels, neuro_event_scores, threshold=0.42
     ).as_dict()
     return reports

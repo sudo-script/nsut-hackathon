@@ -43,7 +43,7 @@ The claim is **not** “highest malware classification accuracy.” It is that e
 
 ## Safety
 
-All datasets are **controlled behavioral simulations**. There is no live malware, no exploit code, and no production telemetry. Containment actions (`block_connection_simulated`, `isolate_endpoint_simulated`) are scored only; they never touch a real host. Do not point this prototype at personal machines, campus networks, or production infrastructure.
+All datasets are **controlled behavioral simulations**. There is no live malware, no exploit code, and no production telemetry. The BIOS / file-seal ledger and dummy ransom in the React lab are **UI only** — they do not encrypt files, talk to a real chain, or control firmware. Containment actions (`block_connection_simulated`, `isolate_endpoint_simulated`) are scored only; they never touch a real host. Do not point this prototype at personal machines, campus networks, or production infrastructure.
 
 ## Repository layout
 
@@ -80,7 +80,7 @@ npm run dev          # local: http://127.0.0.1:5173
 npm run build        # static files in web/dist — upload this folder
 ```
 
-On Vercel or Netlify, set the project root to `web`. The default screen is a virtual Windows PC: files are measured in a simulated UEFI/BIOS gate, executed only in a sandbox, and promoted to the host only after hash, signature, packet, and world-model review. A second tab keeps the campaign-map lab. A third tab is a pitch deck comparing classic AV, ML-based AV, and the neuro-symbolic layer. Detector traces are baked into `web/src/data/campaigns.json`. The firmware layer is a UI simulation, not real BIOS control.
+On Vercel or Netlify, set the project root to `web`. Tabs: sandbox workstation, campaign lab, **BIOS ledger** (dummy ransom with vs without a simulated authority file-seal chain), and the pitch deck. Detector traces are baked into `web/src/data/campaigns.json`. The firmware and ledger layers are UI simulations, not real BIOS or blockchain control.
 
 **Railway:** this repo looks like Python (`requirements.txt`), which is why a default deploy failed with “No start command detected.” The branch now has `railpack.json` (`provider: node`), a root `package.json` that builds `web/`, and `server.mjs` that serves `web/dist` on `$PORT`. Redeploy this branch as-is. Do not leave Root Directory empty without those files.
 

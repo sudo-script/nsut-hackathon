@@ -582,8 +582,8 @@ function Stack() {
           <span>Scan-time + run-time. Cheap first filter. Can be bypassed.</span>
         </li>
         <li>
-          <strong>Firmware / sandbox gate</strong>
-          <span>Measure hash, signature, allow-list. Host execute stays denied.</span>
+          <strong>Firmware / sandbox + file-seal ledger</strong>
+          <span>Authorities hash-sign golden files on a lab chain. Dummy ransom writes are denied.</span>
         </li>
         <li>
           <strong>ML risk</strong>

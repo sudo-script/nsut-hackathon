@@ -1,13 +1,16 @@
 import { useState } from "react";
+import FirmwareLedgerScreen from "./screens/FirmwareLedgerScreen.jsx";
 import LabScreen from "./screens/LabScreen.jsx";
 import PitchScreen from "./screens/PitchScreen.jsx";
 import WorkstationScreen from "./screens/WorkstationScreen.jsx";
 import "./workstation.css";
 import "./pitch.css";
+import "./firmware.css";
 
 const TABS = [
   { id: "workstation", label: "Sandbox workstation" },
   { id: "lab", label: "Campaign lab" },
+  { id: "ledger", label: "BIOS ledger" },
   { id: "pitch", label: "Pitch deck" },
 ];
 
@@ -25,6 +28,7 @@ export default function App() {
       </nav>
       {screen === "workstation" && <WorkstationScreen />}
       {screen === "lab" && <LabScreen />}
+      {screen === "ledger" && <FirmwareLedgerScreen />}
       {screen === "pitch" && <PitchScreen />}
     </>
   );

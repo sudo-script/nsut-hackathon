@@ -1,0 +1,169 @@
+.fw-shell {
+  padding: 10px 14px 12px;
+  height: calc(100vh - 52px);
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 10px;
+  min-height: 0;
+}
+.fw-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+}
+.fw-head h1 { margin: 4px 0 6px; font-size: 22px; }
+.fw-head p { margin: 0; color: var(--muted); font-size: 13px; max-width: 78ch; }
+.fw-actions { display: flex; gap: 8px; }
+.fw-pcs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  min-height: 0;
+}
+.fw-pc {
+  background: #1b1b1b;
+  border-radius: 12px;
+  padding: 7px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #3a3a3a;
+}
+.fw-pc.hot { border-color: #8a2a2a; }
+.fw-pc.safe { border-color: #1f8a5b; }
+.fw-pc > header {
+  display: flex;
+  justify-content: space-between;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px 6px;
+}
+.fw-pc.hot > header { color: #ffc1c7; }
+.fw-pc.safe > header { color: #b7f5d6; }
+.fw-desk {
+  position: relative;
+  flex: 1;
+  min-height: 220px;
+  border-radius: 8px;
+  overflow: hidden;
+  background:
+    radial-gradient(700px 280px at 10% 0%, #3a6ea5 0%, transparent 50%),
+    linear-gradient(160deg, #1b4f8a 0%, #0b2a4a 55%, #07182b 100%);
+}
+.fw-desk.ransom {
+  background: linear-gradient(160deg, #4a1020 0%, #1a080c 70%);
+}
+.fw-icons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 14px 12px 48px;
+}
+.fw-file {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  color: #fff;
+  text-shadow: 0 1px 2px #000;
+}
+.fw-file span {
+  width: 40px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.fw-file em { font-style: normal; font-size: 11px; text-align: center; }
+.fw-file small { font-size: 10px; color: #8ee6b8; }
+.fw-file.locked span { filter: grayscale(1); background: #4a1a1a !important; }
+.fw-file.locked small { color: #ff9aa4; }
+.fw-file.denied small { color: #ffd48a; }
+.fw-file.now span { outline: 2px solid #fff59a; }
+.fw-note, .fw-shield {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: min(240px, 46%);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 0.35);
+}
+.fw-note { background: #3a1515; color: #ffd7d7; }
+.fw-shield { background: #143326; color: #b7f5d6; }
+.fw-note p, .fw-shield p { margin: 6px 0 0; }
+.fw-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34px;
+  background: rgb(15 23 32 / 0.86);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.fw-lower {
+  display: grid;
+  grid-template-columns: 1.1fr 0.7fr 1.2fr;
+  gap: 10px;
+  min-height: 0;
+}
+.fw-bios, .fw-auth, .fw-chain {
+  background: #0c1410;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  overflow: auto;
+  max-height: 220px;
+}
+.fw-bios { color: #3ee06a; font-family: Consolas, monospace; }
+.fw-bios h2, .fw-auth h2, .fw-chain h2 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.fw-bios pre {
+  margin: 0 0 8px;
+  white-space: pre-wrap;
+  font-size: 12px;
+  background: #001000;
+  padding: 8px;
+  border: 1px solid #145c28;
+}
+.fw-bios ol { margin: 0; padding-left: 16px; color: #7dff9c; font-size: 11px; }
+.fw-auth article { margin-bottom: 8px; }
+.fw-auth span, .fw-auth code { display: block; color: var(--muted); font-size: 11px; }
+.fw-chain .chain { display: flex; gap: 8px; overflow: auto; padding-bottom: 4px; }
+.fw-chain article {
+  min-width: 170px;
+  background: #10261c;
+  border: 1px solid #1f8a5b;
+  border-radius: 8px;
+  padding: 8px;
+}
+.fw-chain article.deny { background: #2a1216; border-color: #8a2a2a; }
+.fw-chain article.enroll { border-color: #e9b14a; background: #1a160c; }
+.fw-chain em { color: var(--muted); font-size: 10px; }
+.fw-chain strong { display: block; font-size: 12px; margin: 4px 0; }
+.fw-chain p { margin: 0 0 6px; color: #b7cfc2; font-size: 11px; }
+.fw-chain code { font-size: 10px; color: #9dffb8; }
+.fw-verdict {
+  background: #0c1410;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.fw-verdict.ok { border: 1px solid #1f8a5b; }
+.fw-verdict.hot { border: 1px solid #6d2430; }
+
+@media (max-width: 1100px) {
+  .fw-shell { height: auto; }
+  .fw-pcs, .fw-lower { grid-template-columns: 1fr; }
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Donut, HorzBars, PALETTE, ScatterPlot } from "../components/PitchCharts.jsx";
-import { FUNDS, MARKET, UNIT } from "../data/finance";
+import { HorzBars, PALETTE, ScatterPlot } from "../components/PitchCharts.jsx";
+import { MARKET } from "../data/finance";
 
 const SLIDES = [
   "title",
@@ -8,10 +8,11 @@ const SLIDES = [
   "existing",
   "ours",
   "coord",
+  "customers",
   "trl",
   "samsom",
+  "biz",
   "gtm",
-  "raise",
   "close",
 ];
 
@@ -89,8 +90,8 @@ function Title() {
       <p className="kicker">The short version</p>
       <h1>Your antivirus reads a file. Hackers send a story.</h1>
       <p className="lede">
-        A packed “Photos” app can look clean. A backup script can look evil. People then sit in a dark room
-        clicking tickets until they hate their job. We built a world model that reads the story — and we
+        A packed “Photos” app can look clean. A backup script can look evil. People then sit clicking
+        tickets until they hate their job. We built a world model that reads the story — and we
         already have the Active Inference brain that decides what to look at next.
       </p>
       <div className="hero-pills">
@@ -221,11 +222,11 @@ function Coord() {
           yLabel="Catches the sneaky file  →"
           points={[
             { name: "Classic AV", x: 7.2, y: 2.2, color: PALETTE.av },
-            { name: "Signatures", x: 6.4, y: 3.0, color: "#8eae9a" },
-            { name: "ML AV", x: 2.4, y: 6.2, color: PALETTE.ml },
-            { name: "EDR console", x: 3.6, y: 6.8, color: "#e9b14a" },
-            { name: "Throw people", x: 5.5, y: 7.4, color: "#c77dff" },
-            { name: "Us", x: 8.6, y: 8.5, color: PALETTE.ns, ours: true },
+            { name: "Signatures", x: 6.4, y: 3.0, color: "#5a8f78" },
+            { name: "ML AV", x: 2.4, y: 6.2, color: "#e09a1a" },
+            { name: "EDR console", x: 3.6, y: 6.8, color: "#e09a1a" },
+            { name: "Throw people", x: 5.5, y: 7.4, color: "#8b5cf6" },
+            { name: "Us", x: 8.6, y: 8.5, color: "#0c9a62", ours: true },
           ]}
         />
         <div className="tri tight">
@@ -247,6 +248,75 @@ function Coord() {
     </section>
   );
 }
+
+function Customers() {
+  return (
+    <section className="slide">
+      <p className="kicker">Who actually buys this</p>
+      <h2>Four humans. Four different ways Monday ruins them.</h2>
+      <div className="who">
+        {CUSTOMERS.map((person) => (
+          <article key={person.name}>
+            <div className="who-head">
+              <b style={{ background: person.color }}>{person.initials}</b>
+              <div>
+                <strong>{person.name}</strong>
+                <em>
+                  {person.role} · {person.shop}
+                </em>
+              </div>
+            </div>
+            <p>
+              <span>Without us</span> {person.pain}
+            </p>
+            <p>
+              <span className="ok">With us</span> {person.win}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const CUSTOMERS = [
+  {
+    name: "Ananya",
+    initials: "AR",
+    role: "SOC lead",
+    shop: "Bengaluru fintech, ~220 PCs",
+    color: "#0c9a62",
+    pain: "Queue is admin PowerShell. Board asks why a packed Photos was CLEAN. She spends Friday explaining toast.",
+    win: "One story per chain. Photos still opens in the lab; host persist does not. She keeps her weekend.",
+  },
+  {
+    name: "Rahul",
+    initials: "RM",
+    role: "MSSP ops",
+    shop: "12 tenants, shared Tier-1",
+    color: "#e09a1a",
+    pain: "His margin is analyst minutes. Another model that pages every backup job eats the contract.",
+    win: "Wholesale $1.50/PC. Same brain, many logos. Backup jobs stay Normal. He sells minutes, not panic.",
+  },
+  {
+    name: "Meera",
+    initials: "MI",
+    role: "Campus IT",
+    shop: "Shared lab PCs",
+    color: "#8b5cf6",
+    pain: "Students run mystery binaries. She cannot install a new agent war on every machine. One ransom week ruins the lab.",
+    win: "Sandbox-first + sealed hashes. Dummy ransom can look scary on the left. The right PC keeps the files.",
+  },
+  {
+    name: "Vikram",
+    initials: "VS",
+    role: "CISO",
+    shop: "Healthcare group",
+    color: "#e85d4c",
+    pain: "Auditors want “why denied.” A 0.91 score is not a paper trail. Packed CLEAN is a board slide he dreads.",
+    win: "Fired rules + belief + a wax-sealed hash. He can say the sentence out loud in a meeting.",
+  },
+];
 
 function Trl() {
   return (
@@ -302,16 +372,16 @@ const TRL = [
 function Samsom() {
   return (
     <section className="slide">
-      <p className="kicker">Who pays · TAM / SAM / SOM</p>
+      <p className="kicker">Market · TAM / SAM / SOM</p>
       <h2>Big ocean. We only fish the investigation slice.</h2>
       <div className="split charts">
         <HorzBars
           title="Dollars, 2026 research"
           rows={[
             { label: "TAM  EDR+MDR", value: MARKET.edr2026 + MARKET.mdr2026, color: "#8aa0b5", note: "$8.0B already spent on agents + queues" },
-            { label: "SAM  overlay", value: 1.2, color: "#5ce1e6", note: "$1.2B — the “why did this fire?” layer" },
-            { label: "India cyber", value: MARKET.indiaCyber2026, color: "#c77dff", note: "$6.6B home field" },
-            { label: "SOM  our Y3", value: 0.35, color: PALETTE.ns, note: "$5.9M ARR — a slice, on purpose" },
+            { label: "SAM  overlay", value: 1.2, color: "#2eb8c0", note: "$1.2B — the “why did this fire?” layer" },
+            { label: "India cyber", value: MARKET.indiaCyber2026, color: "#8b5cf6", note: "$6.6B home field" },
+            { label: "SOM  our Y3", value: 0.35, color: "#0c9a62", note: "$5.9M ARR — a slice, on purpose" },
           ]}
         />
         <div className="tri tight">
@@ -328,11 +398,51 @@ function Samsom() {
           <article className="ours">
             <em>SOM · year 3</em>
             <h3>$5.9M ARR</h3>
-            <p>159k seats. 102 customers. India + GCC MSSP first. Not “we own EDR.”</p>
+            <p>159k seats. Those four customer types, India + GCC MSSP first. Not “we own EDR.”</p>
           </article>
         </div>
       </div>
       <p className="fine">Mordor / Windsor Drake / Gartner 2026. SOM bar is scaled so you can see it — it is small, and that is honest.</p>
+    </section>
+  );
+}
+
+function Biz() {
+  return (
+    <section className="slide">
+      <p className="kicker">Business model · how money shows up</p>
+      <h2>We sell a layer and minutes back. Not a new agent.</h2>
+      <div className="tri">
+        <article className="ours">
+          <em>Overlay Core</em>
+          <h3>$3 / PC / month</h3>
+          <p>Ananya’s 220 PCs ≈ $8k a year. A 500-PC shop ≈ $18k. Coffee vs a burnt-out Tier-1.</p>
+        </article>
+        <article>
+          <em>MSSP wholesale</em>
+          <h3>$1.50 / PC / month</h3>
+          <p>Rahul’s twelve tenants, one brain. He resells minutes. We do not steal his logo.</p>
+        </article>
+        <article>
+          <em>Ledger add-on</em>
+          <h3>$0.75 / PC / month</h3>
+          <p>Meera and Vikram: sealed hashes, dummy-ransom proof, a sentence for the auditor.</p>
+        </article>
+      </div>
+      <div className="tri tight">
+        <article>
+          <em>What we never sell</em>
+          <p>A rip-and-replace of Defender. A 40-person SOC. A token. A fear newsletter.</p>
+        </article>
+        <article>
+          <em>Why they pay</em>
+          <p>Fewer dumb tickets + a story they can repeat. Packed CLEAN stops being a board ambush.</p>
+        </article>
+        <article className="ours">
+          <em>Shape of the business</em>
+          <p>Software margin (~75%), not an MDR body shop. Same feed they already collect.</p>
+        </article>
+      </div>
     </section>
   );
 }
@@ -347,59 +457,27 @@ function Gtm() {
           <em>Door 1</em>
           <h3>One angry SOC lead</h3>
           <p>
-            Fintech / campus / hospital IT. They already have AV. We plug the lab into their export.
-            Price: about $3 per PC per month. A 500-PC shop is an $18k year — coffee money vs a
-            burnt-out Tier-1.
+            Ananya’s world: fintech / campus / hospital IT. They already have AV. We plug the lab
+            into their export. If PhotoViewer.crypt does not land, we do not deserve the meeting.
           </p>
         </article>
         <article>
           <em>Door 2</em>
           <h3>One MSSP with twelve tenants</h3>
           <p>
-            They sell minutes. We wholesale at $1.50/PC. Same brain, many logos. India managed
-            security is the fast lane (+15% in 2026, Gartner).
+            Rahul’s world. He sells minutes. India managed security is the fast lane (+15% in 2026,
+            Gartner). Same brain, many logos.
           </p>
         </article>
         <article className="ours">
           <em>The move</em>
           <h3>Demo is the sales team</h3>
           <p>
-            PhotoViewer.crypt opens. Dummy ransom hits the chain. Active Inference skips the dumb
-            look. If that does not close a design partner, more slides will not either.
+            Photos opens. Dummy ransom hits the chain. Active Inference skips the dumb look. That
+            is the GTM. Slides are just the map.
           </p>
         </article>
       </div>
-    </section>
-  );
-}
-
-function Raise() {
-  return (
-    <section className="slide">
-      <p className="kicker">The ask</p>
-      <h2>${UNIT.seedAsk}M seed. 18 months. Hook the brain to a real feed.</h2>
-      <div className="split charts">
-        <Donut title="Where the money goes" slices={FUNDS} />
-        <div className="tri tight">
-          <article className="ours">
-            <em>Build</em>
-            <p>45% — wire Active Inference + the ledger into live EDR JSON. That is TRL 3 → 6.</p>
-          </article>
-          <article>
-            <em>Sell</em>
-            <p>30% — three design-partner SOCs and one GCC MSSP. Not a 40-person field army.</p>
-          </article>
-          <article>
-            <em>Stay alive</em>
-            <p>25% — cloud, SOC2 start, reserve. First EBITDA aimed at year 3, $5.9M ARR.</p>
-          </article>
-        </div>
-      </div>
-      <p className="fine">
-        Overlay $3 / MSSP $1.50 / ledger $0.75 per PC per month. CAC we model at $28k (category
-        median is $35–55k). LTV/CAC about 5×. Full P&amp;L lives in finance.js if a spreadsheet person
-        shows up.
-      </p>
     </section>
   );
 }
@@ -412,7 +490,7 @@ function Close() {
       <div className="close-grid">
         <article>
           <em>Problem</em>
-          <p>Sneaky files look clean. Normal work looks sneaky. People pay for both mistakes.</p>
+          <p>Sneaky files look clean. Normal work looks sneaky. Those four buyers pay for both mistakes.</p>
         </article>
         <article>
           <em>Old kits</em>
@@ -434,9 +512,10 @@ const SLIDE_VIEWS = {
   existing: Existing,
   ours: Ours,
   coord: Coord,
+  customers: Customers,
   trl: Trl,
   samsom: Samsom,
+  biz: Biz,
   gtm: Gtm,
-  raise: Raise,
   close: Close,
 };

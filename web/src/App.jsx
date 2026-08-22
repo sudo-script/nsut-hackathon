@@ -17,7 +17,7 @@ const TABS = [
 export default function App() {
   const [screen, setScreen] = useState("workstation");
   return (
-    <>
+    <div className={screen === "pitch" ? "pitch-mode" : ""}>
       <div className="crt" />
       <nav className="app-nav">
         {TABS.map((tab) => (
@@ -30,6 +30,6 @@ export default function App() {
       {screen === "lab" && <LabScreen />}
       {screen === "ledger" && <FirmwareLedgerScreen />}
       {screen === "pitch" && <PitchScreen />}
-    </>
+    </div>
   );
 }

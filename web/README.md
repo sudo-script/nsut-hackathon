@@ -1,6 +1,11 @@
 # Simulation Lab (React)
 
-Static Vite + React app. Dummy recon / footprint / pentest / theft campaigns are precomputed with XGBoost and the neuro-symbolic world model, then played in the browser. No Python server is required to host it.
+Static Vite + React app with two screens:
+
+1. **Sandbox workstation** — fake Windows desktop. A file cannot run on the host first. Simulated UEFI/BIOS policy measures the hash and signature, then the file executes only inside an isolated sandbox VM while the security backend shows hashes, signatures, packets, XGBoost, and the world model. Only a cleared sample is promoted to the main desktop.
+2. **Campaign lab** — network-map race of dummy specimens vs the two detectors.
+
+No Python server is required to host it. The firmware gate is a **UI simulation**, not real BIOS/UEFI control.
 
 ## Local
 

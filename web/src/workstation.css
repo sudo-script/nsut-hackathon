@@ -85,6 +85,8 @@
   font-size: 11px;
 }
 .pill.dim { opacity: 0.7; }
+.pill.warn { background: #5a3d12; color: #ffd48a; }
+.pill.hot { background: #5a1820; color: #ffc1c7; }
 .clock { margin-left: auto; font-size: 12px; }
 
 .vm-window {
@@ -251,6 +253,52 @@
 .calc-keys .eq { background: #107c10; color: #fff; }
 .doc { color: #222; font-size: 13px; }
 .doc h4 { margin: 0 0 8px; }
+
+.av-window {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: min(320px, 46%);
+  background: #f4f6f8;
+  color: #1b1b1b;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 0.35);
+  z-index: 4;
+  overflow: hidden;
+}
+.av-bar { background: #0078d4; color: #fff; padding: 6px 10px; font-size: 12px; }
+.av-body { padding: 10px; font-size: 12px; }
+.av-file { font-weight: 700; margin: 0 0 8px; }
+.av-window ul { margin: 0; padding-left: 18px; }
+.av-window li { opacity: 0.4; }
+.av-window li.done { opacity: 1; }
+.av-window li.now { opacity: 1; color: #0078d4; }
+.av-result { margin-top: 8px; padding: 8px; border-radius: 6px; display: grid; gap: 2px; }
+.av-result.ok { background: #dff6dd; }
+.av-result.hit { background: #fde7e9; }
+.av-result.miss { background: #fff4ce; }
+.av-bypass { color: #8a6116; font-weight: 700; }
+
+.vs-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.vs { border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+.vs em { display: block; font-size: 10px; color: var(--muted); }
+.vs strong { display: block; font-size: 16px; }
+.vs span { font-size: 11px; color: var(--muted); }
+.vs.ok { border-color: #1f8a5b; }
+.vs.hit { border-color: #ff5d6c; }
+.vs.miss { border-color: #e9b14a; }
+.vs.live { border-color: #e9b14a; }
+.asm-note, .asm-flag { font-size: 11px; color: var(--muted); }
+.asm-flag { color: var(--xgb); }
+.asm {
+  background: #07110c;
+  border: 1px solid #244033;
+  padding: 8px;
+  font-size: 11px;
+  color: #9dffb8;
+  overflow: auto;
+  max-height: 88px;
+}
 
 @media (max-width: 1100px) {
   .ws-split { grid-template-columns: 1fr; height: auto; }

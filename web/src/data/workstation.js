@@ -115,6 +115,26 @@ export const DESKTOP_FILES = [
     bios: SAFE_BIOS("Measured hash matches the firmware allow-list. Sandbox, then host results window."),
   },
   {
+    id: "packed",
+    name: "PhotoViewer.crypt.exe",
+    kind: "Obfuscated dummy",
+    icon: "PV",
+    color: "#3d3d3d",
+    scenario: "data_theft",
+    specimen: "DUMMY-MOTH",
+    hash: "ee91c0b7a24d5f18c3e6a1b8d02f94c7a55e10d3b8c47f2a91e06c33d4b18c01",
+    signed: false,
+    publisher: "Stub / packed (no valid publisher)",
+    reputation: "high entropy · unknown hash",
+    promote: "block",
+    obfuscated: true,
+    processName: "PhotoViewer.crypt.exe",
+    sandboxNote: "Crypter stub unpacks only inside the sandbox. Classic AV never sees the inner bytes on disk.",
+    bios: UNSAFE_BIOS(
+      "On-disk hash is the packer stub, not a known app. Firmware still measures it and forces the sandbox. Behavior after unpack is enough."
+    ),
+  },
+  {
     id: "invoice",
     name: "invoice.docm",
     kind: "Dummy malware",

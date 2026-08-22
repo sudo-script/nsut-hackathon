@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AssemblyTape } from "../components/AssemblyTape.jsx";
+import { AV_STEPS, AvTray, ClassicAvWindow, classicAvResult } from "../components/ClassicAv.jsx";
 import { HostAppWindow } from "../components/HostApps.jsx";
 import { DESKTOP_FILES } from "../data/workstation";
 import { applyThresholds, loadCampaign } from "../lib/campaigns";
@@ -22,6 +24,7 @@ export default function WorkstationScreen() {
   const [processes, setProcesses] = useState([]);
   const [packets, setPackets] = useState([]);
   const [openApps, setOpenApps] = useState([]);
+  const [avStep, setAvStep] = useState(0);
   const timer = useRef(null);
 
   const campaign = useMemo(() => {
@@ -32,6 +35,19 @@ export default function WorkstationScreen() {
   const frame = campaign && frameIndex >= 0 ? campaign.frames[frameIndex] : null;
 
   useEffect(() => () => clearTimeout(timer.current), []);
+
+  useEffect(() => {
+    if (phase !== "av" || !selected) return;
+    if (avStep >= AV_STEPS.length) {
+      timer.current = setTimeout(() => {
+        setPhase("bios");
+        setBiosStep(0);
+      }, 700);
+      return;
+    }
+    timer.current = setTimeout(() => setAvStep((n) => n + 1), 400);
+    return () => clearTimeout(timer.current);
+  }, [phase, avStep, selected]);
 
   useEffect(() => {
     if (phase !== "bios" || !selected) return;
@@ -83,7 +99,8 @@ export default function WorkstationScreen() {
   function openFile(file) {
     clearTimeout(timer.current);
     setSelected(file);
-    setPhase("bios");
+    setPhase("av");
+    setAvStep(0);
     setBiosStep(0);
     setFrameIndex(-1);
     setProcesses([]);
@@ -107,11 +124,13 @@ export default function WorkstationScreen() {
       ? "ALLOWED on main machine after sandbox"
       : phase === "blocked"
         ? "BLOCKED from main machine — remains in sandbox quarantine"
-        : phase === "bios"
-          ? "Firmware gate — host execute is denied until sandbox returns"
-          : phase === "sandbox"
-            ? "Executing only inside the isolated sandbox"
-            : "Double-click a desktop file. It cannot run on the host first.";
+        : phase === "av"
+          ? "Classic AV is doing scan-time + run-time only"
+          : phase === "bios"
+            ? "Firmware gate — host execute is denied until sandbox returns"
+            : phase === "sandbox"
+              ? "Executing only inside the isolated sandbox"
+              : "Double-click a desktop file. It cannot run on the host first.";
 
   return (
     <div className="ws-shell">
@@ -135,9 +154,11 @@ export default function WorkstationScreen() {
                       ? "running"
                       : blocked[file.id]
                         ? "blocked"
-                        : file.promote === "allow"
-                          ? "safe"
-                          : "dummy malware"}
+                        : file.obfuscated
+                          ? "obfuscated dummy"
+                          : file.promote === "allow"
+                            ? "safe"
+                            : "dummy malware"}
                   </small>
                 </button>
               ))}
@@ -178,6 +199,8 @@ export default function WorkstationScreen() {
               </div>
             )}
 
+            <ClassicAvWindow file={selected} step={avStep} visible={Boolean(selected) && phase !== "idle"} />
+
             {phase === "bios" && selected && (
               <div className="bios-overlay">
                 <p className="bios-brand">UEFI Measured Execution · alice-pc</p>
@@ -214,6 +237,12 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
               {selected && !openApps.some((file) => file.id === selected.id) && (
                 <span className="pill dim">{selected.name}</span>
               )}
+              <AvTray file={selected} phase={phase} />
+              {selected && phase !== "idle" && phase !== "av" && (
+                <span className={`pill ${phase === "blocked" || frame?.ns_alert ? "hot" : phase === "allowed" ? "" : "dim"}`}>
+                  NS {phase === "blocked" || frame?.ns_alert ? "ALERT" : phase === "allowed" ? "ALLOW" : "watch"}
+                </span>
+              )}
               <span className="clock">11:24 AM</span>
             </div>
           </div>
@@ -221,7 +250,25 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
 
         <aside className="sec-backend">
           <h2>Security layer (backend)</h2>
-          <p className="sec-path">UEFI → sandbox → hash / signature / packets → world model → host allow</p>
+          <p className="sec-path">Classic AV (scan + run) vs firmware + assembly behavior + world model</p>
+          {selected && (
+            <div className="vs-strip">
+              <div className={`vs ${classicAvResult(selected).bypassed ? "miss" : classicAvResult(selected).scan === "THREAT" ? "hit" : "ok"}`}>
+                <em>Classic AV</em>
+                <strong>
+                  {classicAvResult(selected).bypassed
+                    ? "BYPASSED"
+                    : classicAvResult(selected).scan}
+                </strong>
+                <span>scan-time + run-time only</span>
+              </div>
+              <div className={`vs ${phase === "blocked" ? "hit" : phase === "allowed" ? "ok" : "live"}`}>
+                <em>Neuro-symbolic</em>
+                <strong>{phase === "blocked" ? "DETECT" : phase === "allowed" ? "ALLOW" : "WATCH"}</strong>
+                <span>UEFI + sandbox assembly/behavior</span>
+              </div>
+            </div>
+          )}
 
           <BackendCard title="Firmware / BIOS policy" tone={phase === "bios" ? "live" : selected ? "ok" : ""}>
             {selected ? (
@@ -262,6 +309,8 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
             )}
           </BackendCard>
 
+          <AssemblyTape file={selected} frame={frame} phase={phase} />
+
           <BackendCard title="World model + XGBoost" tone={frame?.ns_alert ? "hot" : frame || selected?.promote === "allow" ? "live" : ""}>
             {frame ? (
               <>
@@ -295,7 +344,13 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
                   : "Promoted to the main desktop. Host still did not run the raw first copy."}
               </p>
             )}
-            {phase === "blocked" && <p>Main OS never received an executable mapping. Snapshot can be discarded.</p>}
+            {phase === "blocked" && (
+              <p>
+                {selected?.obfuscated
+                  ? "Classic AV stayed CLEAN because the on-disk sample is packed. The world model still blocked host execute from sandbox behavior (temp execution, rare outbound, theft indicators)."
+                  : "Main OS never received an executable mapping. Snapshot can be discarded."}
+              </p>
+            )}
           </div>
         </aside>
       </div>

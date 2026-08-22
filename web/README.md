@@ -2,7 +2,7 @@
 
 Static Vite + React app with two screens:
 
-1. **Sandbox workstation** — fake Windows desktop. A file cannot run on the host first. Simulated UEFI/BIOS policy measures the hash and signature, then the file executes only inside an isolated sandbox VM while the security backend shows hashes, signatures, packets, XGBoost, and the world model. Only a cleared sample is promoted to the main desktop.
+1. **Sandbox workstation** — fake Windows desktop. Classic AV (scan-time + run-time) can miss a packed dummy (`PhotoViewer.crypt.exe`). The neuro-symbolic path still measures at a simulated UEFI gate and watches sandbox assembly/API behavior, so obfuscation does not get a host execute. Safe apps (Paint, Notepad, Calculator) still open after they clear.
 2. **Campaign lab** — network-map race of dummy specimens vs the two detectors.
 
 No Python server is required to host it. The firmware gate is a **UI simulation**, not real BIOS/UEFI control.

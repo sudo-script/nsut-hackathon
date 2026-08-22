@@ -162,6 +162,75 @@ export function Radar({ title, axes, series, size = 260 }) {
   );
 }
 
+export function CostValuePlot({ title, points, maxCost = 18 }) {
+  const w = 540;
+  const h = 318;
+  const p = { l: 50, r: 16, t: 36, b: 44 };
+  const iw = w - p.l - p.r;
+  const ih = h - p.t - p.b;
+  const xy = (cost, quality) => [p.l + (cost / maxCost) * iw, p.t + ih - (quality / 10) * ih];
+  const cheapX = p.l + (7.5 / maxCost) * iw;
+  const spendX = p.l + (11 / maxCost) * iw;
+  const ticks = [0, 5, 10, 15];
+
+  return (
+    <figure className="chart cost-value">
+      {title && <figcaption>{title}</figcaption>}
+      <svg viewBox={`0 0 ${w} ${h}`} role="img" aria-label={title || "cost versus quality"}>
+        <rect x={p.l} y={p.t} width={cheapX - p.l} height={ih} className="zone-cheap" />
+        <rect x={spendX} y={p.t} width={p.l + iw - spendX} height={ih} className="zone-spend" />
+        <text x={p.l + 10} y={p.t + 16} className="zone-label cheap">
+          cheaper + way better
+        </text>
+        <text x={p.l + iw - 8} y={p.t + 16} className="zone-label spend" textAnchor="end">
+          others · high cost
+        </text>
+        {ticks.map((tick) => {
+          const x = p.l + (tick / maxCost) * iw;
+          return (
+            <g key={tick}>
+              <line x1={x} x2={x} y1={p.t} y2={p.t + ih} className="grid faint" />
+              <text x={x} y={h - 18} className="axis" textAnchor="middle">
+                ${tick}
+              </text>
+            </g>
+          );
+        })}
+        {[2.5, 5, 7.5].map((tick) => {
+          const y = p.t + ih - (tick / 10) * ih;
+          return <line key={tick} x1={p.l} x2={p.l + iw} y1={y} y2={y} className="grid faint" />;
+        })}
+        <line x1={p.l} y1={p.t + ih} x2={p.l + iw} y2={p.t + ih} className="grid" />
+        <line x1={p.l} y1={p.t} x2={p.l} y2={p.t + ih} className="grid" />
+        <text x={p.l + iw / 2} y={h - 4} className="axis" textAnchor="middle">
+          list $ / PC / month  →  more expensive
+        </text>
+        <text x="13" y={p.t + ih / 2} className="axis" textAnchor="middle" transform={`rotate(-90 13 ${p.t + ih / 2})`}>
+          catches sneaky + SOC stays sane  →
+        </text>
+        {points.map((pt) => {
+          const [x, y] = xy(pt.cost, pt.quality);
+          const lift = pt.ours ? 20 : 14;
+          const nx = x + (pt.nudge?.[0] || 0);
+          const ny = y + (pt.nudge?.[1] || 0);
+          return (
+            <g key={pt.name}>
+              {pt.ours && <circle cx={x} cy={y} r="16" className="ours-glow" />}
+              <circle cx={x} cy={y} r={pt.ours ? 11 : 7} fill={pt.color} />
+              <text x={nx} y={ny - lift} className={`dot-name ${pt.ours ? "ours" : ""}`} textAnchor="middle">
+                {pt.name}
+              </text>
+              <text x={nx} y={ny + (pt.ours ? 20 : 16)} className="dot-price" textAnchor="middle">
+                {pt.price}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </figure>
+  );
+}
+
 export function ScatterPlot({ title, xLabel, yLabel, points }) {
   const w = 420;
   const h = 280;

@@ -39,6 +39,20 @@ export const AV_COMPARE = [
   { label: "Keep Defender + us", monthly: 6.0, color: "#14b87a", note: "P1 + $3 incremental" },
 ];
 
+/**
+ * Cost (X, $/PC/mo list) vs how good the stack actually is (Y, 0–10 judgment).
+ * Y = packed-file catch + SOC sanity. Not a lab ROC — same spirit as the coord slide.
+ */
+export const COST_VALUE = [
+  { name: "Defender P1", cost: 3.0, quality: 2.3, color: "#8aa0b5", price: "$3", hint: "cheap · blind" },
+  { name: "Falcon Go", cost: 5.0, quality: 3.1, color: "#c9a24a", price: "$5", hint: "AV-ish", nudge: [-16, 2] },
+  { name: "Defender P2", cost: 5.2, quality: 4.5, color: "#6b8aa3", price: "$5.20", hint: "EDR, still noisy", nudge: [18, -2] },
+  { name: "Falcon Ent.", cost: 15.4, quality: 6.7, color: "#c47f10", price: "$15.40", hint: "high cost", nudge: [10, -6] },
+  { name: "S1 Complete", cost: 15.0, quality: 5.9, color: "#8b5cf6", price: "$15", hint: "high cost", nudge: [-8, 8] },
+  { name: "Us overlay", cost: 3.0, quality: 8.7, color: "#0c9a62", price: "$3", hint: "cheaper · better", ours: true },
+  { name: "Keep AV + us", cost: 6.0, quality: 9.2, color: "#14b87a", price: "$6", hint: "best stack", ours: true },
+];
+
 export const YEARS = ["Y1", "Y2", "Y3"];
 
 export const TRACTION = {

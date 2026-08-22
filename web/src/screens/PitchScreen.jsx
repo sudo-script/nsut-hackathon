@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { HorzBars, PALETTE, ScatterPlot } from "../components/PitchCharts.jsx";
-import { AV_COMPARE, MARKET } from "../data/finance";
+import { CostValuePlot, HorzBars, PALETTE, ScatterPlot } from "../components/PitchCharts.jsx";
+import { COST_VALUE, MARKET } from "../data/finance";
 
 const SLIDES = [
   "title",
@@ -411,17 +411,9 @@ function Biz() {
   return (
     <section className="slide">
       <p className="kicker">Business model · vs native AV</p>
-      <h2>A second full EDR is $8–20 / PC. We are $3 on the AV they already bought.</h2>
-      <div className="split charts">
-        <HorzBars
-          title="Typical list · $ / PC / month"
-          rows={AV_COMPARE.map((row) => ({
-            label: row.label,
-            value: row.monthly,
-            color: row.color,
-            note: `$${row.monthly.toFixed(row.monthly % 1 ? 1 : 0)} · ${row.note}`,
-          }))}
-        />
+      <h2>They pay more and still miss the costume. We are cheaper — and actually better.</h2>
+      <div className="split charts cost-split">
+        <CostValuePlot title="Cost vs how good it is · typical list 2025–26" points={COST_VALUE} />
         <div className="tri tight">
           <article className="ours">
             <em>Overlay Core</em>
@@ -442,30 +434,31 @@ function Biz() {
       </div>
       <div className="tri tight">
         <article>
-          <em>Native AV they keep</em>
+          <em>Bottom-left · cheap and blind</em>
           <p>
-            Defender P1 ~$3/user/mo. Falcon Go ~$5/PC/mo. Fine as a bouncer. Still blind on packed
-            Photos. Still toast-screams if they buy the loud EDR tier.
+            Defender P1 ~$3. Falcon Go ~$5. Fine as a bouncer. Packed Photos walks in dressed as a
+            photo app. That is the cheap they already own.
           </p>
         </article>
         <article>
-          <em>Native EDR they might rip to</em>
+          <em>Far right · high cost, still toast</em>
           <p>
-            Falcon Enterprise ~$15/PC/mo list ($185/yr). SentinelOne Complete similar. 500 PCs ≈
-            $90k/year — and they still pay humans to say “not a fire.”
+            Falcon Enterprise ~$15/PC/mo ($185/yr). S1 Complete similar. 500 PCs ≈ $90k/year — and
+            they still pay humans $20–45 to say “not a fire.”
           </p>
         </article>
         <article className="ours">
-          <em>The honest stack</em>
+          <em>Top-left · cheaper, way better</em>
           <p>
-            Keep Defender (often already in M365). Add us. ~$6/PC if P1 is on the bill, or +$3 if
-            E5 already ate Defender. Cheaper than a second agent war.
+            Keep Defender. Add us. Overlay $3, or ~$6 if P1 is on the bill. Same stream, a world
+            model, fewer dumb looks. Not a second agent war.
           </p>
         </article>
       </div>
       <p className="fine">
-        List ranges 2025–26 (Microsoft P1 $3 / P2 $5.20 per user/mo; CrowdStrike Go $60/yr, Enterprise
-        $185/yr; S1 Complete ~$180/yr). Volume quotes are lower. Hidden cost is still the $20–45 look.
+        X is published list (Microsoft P1 $3 / P2 $5.20; CrowdStrike Go $60/yr, Enterprise $185/yr;
+        S1 Complete ~$180/yr). Y is the same judgment as the coord slide — packed-file catch + SOC
+        sanity — not a vendor quote. Volume deals are lower. Hidden cost is still the $20–45 look.
       </p>
     </section>
   );

@@ -69,6 +69,19 @@
 }
 .split { grid-template-columns: 1.15fr 0.85fr; align-items: start; }
 .split.charts { grid-template-columns: 1fr 1fr; }
+.split.charts.cost-split { grid-template-columns: 1.35fr 0.65fr; }
+.chart.cost-value .zone-cheap { fill: #dff6ea; }
+.chart.cost-value .zone-spend { fill: #fde8e4; }
+.chart.cost-value .zone-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.chart.cost-value .zone-label.cheap { fill: #0c6b44; }
+.chart.cost-value .zone-label.spend { fill: #b42318; }
+.chart.cost-value .ours-glow { fill: #14b87a; opacity: 0.22; }
+.chart.cost-value .dot-price { fill: #5c6a78; font-size: 9px; }
 .charts-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .tri.tight article h3 { font-size: 16px; }
 .demo-grid {

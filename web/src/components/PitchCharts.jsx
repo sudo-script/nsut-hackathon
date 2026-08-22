@@ -169,7 +169,7 @@ export function CostValuePlot({ title, points, maxCost = 18 }) {
   const iw = w - p.l - p.r;
   const ih = h - p.t - p.b;
   const xy = (cost, quality) => [p.l + (cost / maxCost) * iw, p.t + ih - (quality / 10) * ih];
-  const cheapX = p.l + (7.5 / maxCost) * iw;
+  const cheapX = p.l + (4 / maxCost) * iw;
   const spendX = p.l + (11 / maxCost) * iw;
   const ticks = [0, 5, 10, 15];
 
@@ -203,7 +203,7 @@ export function CostValuePlot({ title, points, maxCost = 18 }) {
         <line x1={p.l} y1={p.t + ih} x2={p.l + iw} y2={p.t + ih} className="grid" />
         <line x1={p.l} y1={p.t} x2={p.l} y2={p.t + ih} className="grid" />
         <text x={p.l + iw / 2} y={h - 4} className="axis" textAnchor="middle">
-          list $ / PC / month  →  more expensive
+          new $ / PC / month you would write  →
         </text>
         <text x="13" y={p.t + ih / 2} className="axis" textAnchor="middle" transform={`rotate(-90 13 ${p.t + ih / 2})`}>
           catches sneaky + SOC stays sane  →

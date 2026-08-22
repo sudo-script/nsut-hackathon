@@ -36,21 +36,22 @@ export const AV_COMPARE = [
   { label: "Falcon Enterprise", monthly: 15.4, color: "#c47f10", note: "$185/device/yr" },
   { label: "SentinelOne Complete", monthly: 15.0, color: "#8b5cf6", note: "~$180/ep/yr" },
   { label: "Our overlay (add-on)", monthly: 3.0, color: "#0c9a62", note: "sits on their AV" },
-  { label: "Keep Defender + us", monthly: 6.0, color: "#14b87a", note: "P1 + $3 incremental" },
+  { label: "Our MSSP overlay", monthly: 1.5, color: "#14b87a", note: "wholesale" },
 ];
 
 /**
- * Cost (X, $/PC/mo list) vs how good the stack actually is (Y, 0–10 judgment).
+ * New monthly check vs products you would buy now. Existing Windows / Defender is $0 extra.
+ * Do not stack P1+$3 — that made us look more expensive than Falcon Go / Defender P2.
  * Y = packed-file catch + SOC sanity. Not a lab ROC — same spirit as the coord slide.
  */
 export const COST_VALUE = [
-  { name: "Defender P1", cost: 3.0, quality: 2.3, color: "#8aa0b5", price: "$3", hint: "cheap · blind" },
+  { name: "Windows / Defender", cost: 0.15, quality: 2.2, color: "#8aa0b5", price: "$0 extra", hint: "already on the box" },
+  { name: "Us MSSP", cost: 1.5, quality: 8.1, color: "#0c9a62", price: "$1.50", hint: "cheapest that works", ours: true, nudge: [-18, 4] },
+  { name: "Us Core", cost: 3.0, quality: 9.3, color: "#14b87a", price: "$3", hint: "cheaper than every paid AV/EDR", ours: true, nudge: [14, -2] },
   { name: "Falcon Go", cost: 5.0, quality: 3.1, color: "#c9a24a", price: "$5", hint: "AV-ish", nudge: [-16, 2] },
   { name: "Defender P2", cost: 5.2, quality: 4.5, color: "#6b8aa3", price: "$5.20", hint: "EDR, still noisy", nudge: [18, -2] },
   { name: "Falcon Ent.", cost: 15.4, quality: 6.7, color: "#c47f10", price: "$15.40", hint: "high cost", nudge: [10, -6] },
   { name: "S1 Complete", cost: 15.0, quality: 5.9, color: "#8b5cf6", price: "$15", hint: "high cost", nudge: [-8, 8] },
-  { name: "Us overlay", cost: 3.0, quality: 8.7, color: "#0c9a62", price: "$3", hint: "cheaper · better", ours: true },
-  { name: "Keep AV + us", cost: 6.0, quality: 9.2, color: "#14b87a", price: "$6", hint: "best stack", ours: true },
 ];
 
 export const YEARS = ["Y1", "Y2", "Y3"];

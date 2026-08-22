@@ -411,9 +411,9 @@ function Biz() {
   return (
     <section className="slide">
       <p className="kicker">Business model · vs native AV</p>
-      <h2>They pay more and still miss the costume. We are cheaper — and actually better.</h2>
+      <h2>Every paid option on the market costs more. We are $1.50–$3 — and actually better.</h2>
       <div className="split charts cost-split">
-        <CostValuePlot title="Cost vs how good it is · typical list 2025–26" points={COST_VALUE} />
+        <CostValuePlot title="New check vs how good it is · typical list 2025–26" points={COST_VALUE} />
         <div className="tri tight">
           <article className="ours">
             <em>Overlay Core</em>
@@ -434,31 +434,31 @@ function Biz() {
       </div>
       <div className="tri tight">
         <article>
-          <em>Bottom-left · cheap and blind</em>
+          <em>Already on the box · $0 extra</em>
           <p>
-            Defender P1 ~$3. Falcon Go ~$5. Fine as a bouncer. Packed Photos walks in dressed as a
-            photo app. That is the cheap they already own.
+            Windows AV / Defender they already own. Fine as a bouncer. Packed Photos still walks
+            in dressed as a photo app. Not a competing buy — already sunk.
           </p>
         </article>
         <article>
           <em>Far right · high cost, still toast</em>
           <p>
-            Falcon Enterprise ~$15/PC/mo ($185/yr). S1 Complete similar. 500 PCs ≈ $90k/year — and
-            they still pay humans $20–45 to say “not a fire.”
+            Falcon Go $5. Defender P2 $5.20. Falcon Enterprise / S1 ~$15. 500 PCs on Enterprise ≈
+            $90k/year — and they still pay humans $20–45 to say “not a fire.”
           </p>
         </article>
         <article className="ours">
-          <em>Top-left · cheaper, way better</em>
+          <em>Top-left · cheaper than every paid option</em>
           <p>
-            Keep Defender. Add us. Overlay $3, or ~$6 if P1 is on the bill. Same stream, a world
-            model, fewer dumb looks. Not a second agent war.
+            Core $3. MSSP $1.50. Less than Falcon Go, Defender P2, or a $15 EDR. Their existing AV
+            stays $0 extra. Same stream, a world model, fewer dumb looks.
           </p>
         </article>
       </div>
       <p className="fine">
-        X is published list (Microsoft P1 $3 / P2 $5.20; CrowdStrike Go $60/yr, Enterprise $185/yr;
-        S1 Complete ~$180/yr). Y is the same judgment as the coord slide — packed-file catch + SOC
-        sanity — not a vendor quote. Volume deals are lower. Hidden cost is still the $20–45 look.
+        X is the new monthly check (CrowdStrike Go $60/yr, P2 $5.20/user/mo, Enterprise $185/yr,
+        S1 Complete ~$180/yr). Existing Defender / Windows AV is $0 extra — we do not add it to our
+        price. Y is packed-file catch + SOC sanity, same judgment as the coord slide.
       </p>
     </section>
   );

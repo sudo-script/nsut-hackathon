@@ -1,4 +1,4 @@
-/** Simulated firmware file-seal ledger. Hashes and keys are lab placeholders, not real crypto. */
+/** Simulated firmware file-seal authorities. Hashes are lab placeholders; the chain module commits them. */
 
 export const AUTHORITIES = [
   {
@@ -91,58 +91,6 @@ export const SEALED_FILES = [
   },
 ];
 
-export const GENESIS = [
-  {
-    height: 0,
-    type: "genesis",
-    title: "UEFI genesis",
-    detail: "Root of trust measured. Empty file-seal chain.",
-    authority: "root",
-    hash: "00000000a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef01234567",
-    prev: "0000000000000000000000000000000000000000000000000000000000000000",
-  },
-  {
-    height: 1,
-    type: "enroll",
-    title: "Enroll Microsoft Windows",
-    detail: "Vendor key signed by UEFI root. May seal system binaries.",
-    authority: "msft",
-    hash: "1a0b91c2d83e4f15a6c70d2e94b81a0c3f58e19d24b7c6a0e91f33d5a18b100",
-    prev: "00000000a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef01234567",
-  },
-  {
-    height: 2,
-    type: "enroll",
-    title: "Enroll Contoso IT",
-    detail: "Admin authority. May seal scripts and HR exports.",
-    authority: "it",
-    hash: "2b1c02d3e94f5a16b7d81e3f05c92b1d4a69f20e35c8d7b1f02a44e6b29c200",
-    prev: "1a0b91c2d83e4f15a6c70d2e94b81a0c3f58e19d24b7c6a0e91f33d5a18b100",
-  },
-  {
-    height: 3,
-    type: "enroll",
-    title: "Enroll Alice / Contoso",
-    detail: "User authority chained under IT. May seal documents and photos.",
-    authority: "alice",
-    hash: "3c2d13e4f05a6b27c8e92f4a16d03c2e5b70a31f46d9e8c2a13b55f7c30d300",
-    prev: "2b1c02d3e94f5a16b7d81e3f05c92b1d4a69f20e35c8d7b1f02a44e6b29c200",
-  },
-  ...SEALED_FILES.map((file, index) => ({
-    height: 4 + index,
-    type: "seal",
-    title: `Seal ${file.name}`,
-    detail: `Golden SHA-256 recorded. Only ${authorityName(file.authority)} may rewrite this object.`,
-    authority: file.authority,
-    file: file.id,
-    hash: `4d${index}e24f16b7c38d9fa03b27e6c81d4f7a92b40e57e0f3d24c15a66e8d41e40${index}`,
-    prev:
-      index === 0
-        ? "3c2d13e4f05a6b27c8e92f4a16d03c2e5b70a31f46d9e8c2a13b55f7c30d300"
-        : `4d${index - 1}e24f16b7c38d9fa03b27e6c81d4f7a92b40e57e0f3d24c15a66e8d41e40${index - 1}`,
-  })),
-];
-
 export const RANSOM_STEPS = [
   {
     id: "drop",
@@ -153,7 +101,7 @@ export const RANSOM_STEPS = [
   ...SEALED_FILES.map((file) => ({
     id: `write-${file.id}`,
     title: `Overwrite ${file.name}`,
-    detail: `Dummy ransom tries to replace the sealed bytes. No authority signature is presented.`,
+    detail: "Dummy ransom tries to replace the sealed bytes. No authority signature is presented.",
     file: file.id,
   })),
   {

@@ -43,7 +43,7 @@ The claim is **not** “highest malware classification accuracy.” It is that e
 
 ## Safety
 
-All datasets are **controlled behavioral simulations**. There is no live malware, no exploit code, and no production telemetry. The BIOS / file-seal ledger and dummy ransom in the React lab are **UI only** — they do not encrypt files, talk to a real chain, or control firmware. Containment actions (`block_connection_simulated`, `isolate_endpoint_simulated`) are scored only; they never touch a real host. Do not point this prototype at personal machines, campus networks, or production infrastructure.
+All datasets are **controlled behavioral simulations**. There is no live malware, no exploit code, and no production telemetry. The BIOS / file-seal ledger and dummy ransom in the React lab are **UI + in-browser hash-linked blocks** — they do not encrypt files, run a public chain, or control firmware. Containment actions (`block_connection_simulated`, `isolate_endpoint_simulated`) are scored only; they never touch a real host. Do not point this prototype at personal machines, campus networks, or production infrastructure.
 
 ## Repository layout
 

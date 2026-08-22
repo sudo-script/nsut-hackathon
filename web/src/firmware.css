@@ -6,6 +6,9 @@
   gap: 10px;
   min-height: 0;
 }
+.fw-shell.netted {
+  grid-template-rows: auto 0.9fr auto auto auto;
+}
 .fw-head {
   display: flex;
   justify-content: space-between;
@@ -109,12 +112,47 @@
   padding: 0 10px;
   font-size: 12px;
 }
+.fw-mid {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr;
+  gap: 10px;
+  min-height: 0;
+}
 .fw-lower {
   display: grid;
   grid-template-columns: 1.1fr 0.7fr 1.2fr;
   gap: 10px;
   min-height: 0;
 }
+.fw-lower.slim { grid-template-columns: 0.7fr 1.5fr; }
+.fw-net {
+  background: #0c1410;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 10px 6px;
+  min-height: 0;
+}
+.fw-net h2 {
+  margin: 0 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.fw-net svg { width: 100%; height: 168px; display: block; }
+.net-link { stroke: #2a5544; stroke-width: 2; }
+.net-pkt { fill: #5ce1e6; }
+.net-node { fill: #132017; stroke: #3d6b54; stroke-width: 2; }
+.net-node.authority { stroke: #e9b14a; }
+.net-node.validator { stroke: #5ce1e6; }
+.net-node.deny { fill: #2a1216; stroke: #ff5d6c; }
+.net-node.allow { fill: #143326; stroke: #3ee0a0; }
+.net-node text, .fw-net text { fill: var(--ink); font-size: 10px; text-anchor: middle; font-weight: 700; }
+.net-label { fill: var(--muted); font-weight: 400; font-size: 10px; }
+.net-vote { font-size: 9px; letter-spacing: 0.08em; }
+.net-vote.deny { fill: #ff5d6c; }
+.net-vote.allow { fill: #3ee0a0; }
+.net-status { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
+.net-status.ok { color: #3ee0a0; }
+.net-status.hot { color: #ff5d6c; }
 .fw-bios, .fw-auth, .fw-chain {
   background: #0c1410;
   border: 1px solid var(--line);
@@ -165,5 +203,5 @@
 
 @media (max-width: 1100px) {
   .fw-shell { height: auto; }
-  .fw-pcs, .fw-lower { grid-template-columns: 1fr; }
+  .fw-pcs, .fw-lower, .fw-mid, .fw-lower.slim { grid-template-columns: 1fr; }
 }

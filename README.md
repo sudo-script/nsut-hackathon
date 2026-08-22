@@ -57,6 +57,7 @@ active_inference/    action set, Score(a) = IG + risk reduction − cost
 experiments/         seven evaluation tests + run_all
 evaluation/          metrics and plots
 dashboard/           static HTML timeline / world-state view
+demo/                interactive lab: dummy campaigns vs XGBoost + world model
 tests/               unit and pipeline checks
 ```
 
@@ -67,7 +68,10 @@ python -m pip install -r requirements.txt
 python -m pytest
 python -m experiments.run_all --output data/processed
 python -m dashboard.app --results data/processed/results.json
+python -m demo.app --port 5050
 ```
+
+Open `http://127.0.0.1:5050` for the interactive lab. Launch a dummy specimen (recon, footprinting, simulated pentest, data theft, or benign admin). Sliders change stealth, playback speed, and detector thresholds. The map animates host discovery, port probes, and fake file theft while XGBoost and the world model race in real time. Nothing leaves the simulator.
 
 `data/processed/results.json` holds the seven-test comparison. `data/processed/dashboard.html` shows one reconstructed chain:
 

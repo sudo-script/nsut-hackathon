@@ -57,7 +57,8 @@ active_inference/    action set, Score(a) = IG + risk reduction − cost
 experiments/         seven evaluation tests + run_all
 evaluation/          metrics and plots
 dashboard/           static HTML timeline / world-state view
-demo/                interactive lab: dummy campaigns vs XGBoost + world model
+demo/                campaign generator + optional Flask lab + static export
+web/                 hostable Vite React lab (Vercel / Netlify / GitHub Pages)
 tests/               unit and pipeline checks
 ```
 
@@ -68,10 +69,20 @@ python -m pip install -r requirements.txt
 python -m pytest
 python -m experiments.run_all --output data/processed
 python -m dashboard.app --results data/processed/results.json
-python -m demo.app --port 5050
 ```
 
-Open `http://127.0.0.1:5050` for the interactive lab. Launch a dummy specimen (recon, footprinting, simulated pentest, data theft, or benign admin). Sliders change stealth, playback speed, and detector thresholds. The map animates host discovery, port probes, and fake file theft while XGBoost and the world model race in real time. Nothing leaves the simulator.
+### Hostable React lab (recommended)
+
+```bash
+cd web
+npm install
+npm run dev          # local: http://127.0.0.1:5173
+npm run build        # static files in web/dist — upload this folder
+```
+
+On Vercel or Netlify, set the project root to `web`. The UI is the same dummy-campaign lab (recon, footprinting, simulated pentest, data theft) racing XGBoost against the world model. Detector traces are baked into `web/src/data/campaigns.json`, so hosting does not need Flask or Python.
+
+Optional local Python server (same lab, live model): `python -m demo.app --host 127.0.0.1 --port 5050`
 
 `data/processed/results.json` holds the seven-test comparison. `data/processed/dashboard.html` shows one reconstructed chain:
 

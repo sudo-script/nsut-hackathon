@@ -120,6 +120,8 @@ export const DESKTOP_FILES = [
     kind: "Obfuscated dummy",
     icon: "PV",
     color: "#3d3d3d",
+    app: "photoviewer",
+    windowTitle: "Photos",
     scenario: "data_theft",
     specimen: "DUMMY-MOTH",
     hash: "ee91c0b7a24d5f18c3e6a1b8d02f94c7a55e10d3b8c47f2a91e06c33d4b18c01",
@@ -129,7 +131,7 @@ export const DESKTOP_FILES = [
     promote: "block",
     obfuscated: true,
     processName: "PhotoViewer.crypt.exe",
-    sandboxNote: "Crypter stub unpacks only inside the sandbox. Classic AV never sees the inner bytes on disk.",
+    sandboxNote: "AV says CLEAN, so Photos opens like a normal app. The world model still watches the unpack.",
     bios: UNSAFE_BIOS(
       "On-disk hash is the packer stub, not a known app. Firmware still measures it and forces the sandbox. Behavior after unpack is enough."
     ),

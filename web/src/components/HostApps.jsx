@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-export function HostAppWindow({ file, onClose, offset = 0 }) {
+export function HostAppWindow({ file, frame = null, quarantined = false, onClose, offset = 0 }) {
   return (
     <div
-      className={`host-app ${file.app}`}
+      className={`host-app ${file.app} ${quarantined ? "flagged" : ""}`}
       style={{ top: 28 + offset * 22, left: 200 + offset * 18 }}
     >
       <div className="host-app-bar">
@@ -18,7 +18,57 @@ export function HostAppWindow({ file, onClose, offset = 0 }) {
         {file.app === "calc" && <CalcApp />}
         {file.app === "notes" && <NotesApp />}
         {file.app === "health" && <HealthApp />}
+        {file.app === "photoviewer" && <PackedPhotoViewer frame={frame} quarantined={quarantined} />}
       </div>
+    </div>
+  );
+}
+
+const ALBUM = [
+  { id: "beach", title: "Vacation-2024.jpg", caption: "Harbor — Aug 2024" },
+  { id: "trail", title: "dusk-trail.jpg", caption: "Ridge trail at dusk" },
+  { id: "city", title: "night-market.jpg", caption: "City lights" },
+  { id: "cabin", title: "cabin.jpg", caption: "Weekend cabin" },
+];
+
+export function PackedPhotoViewer({ frame, quarantined = false }) {
+  const [idx, setIdx] = useState(0);
+  const photo = ALBUM[idx];
+  const stolen = frame?.stolen_name;
+  const hostile = Boolean(frame && ["exfil", "steal", "beacon", "creds", "spawn"].includes(frame.visual));
+
+  return (
+    <div className={`photos-app ${hostile ? "hostile" : ""} ${quarantined ? "locked" : ""}`}>
+      <div className="photos-toolbar">
+        <button type="button" onClick={() => setIdx((n) => (n + ALBUM.length - 1) % ALBUM.length)} aria-label="Previous">
+          ‹
+        </button>
+        <span>{photo.title}</span>
+        <button type="button" onClick={() => setIdx((n) => (n + 1) % ALBUM.length)} aria-label="Next">
+          ›
+        </button>
+      </div>
+      <div className={`photos-stage art-${photo.id}`}>
+        <div className="photos-sun" />
+        <div className="photos-ground" />
+        <p>{photo.caption}</p>
+      </div>
+      <div className="photos-thumbs">
+        {ALBUM.map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`art-${item.id} ${index === idx ? "on" : ""}`}
+            onClick={() => setIdx(index)}
+            aria-label={item.title}
+          />
+        ))}
+      </div>
+      {hostile && <p className="photos-note">{frame?.title || "Unpacking stub"}</p>}
+      {stolen && <p className="steal">Copying {stolen} to rare host…</p>}
+      {quarantined && (
+        <p className="photos-banner">World model blocked host persist. This Photos window is a sandbox copy only.</p>
+      )}
     </div>
   );
 }

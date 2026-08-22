@@ -2,7 +2,7 @@
 
 Static Vite + React app with two screens:
 
-1. **Sandbox workstation** — fake Windows desktop. Classic AV (scan-time + run-time) can miss a packed dummy (`PhotoViewer.crypt.exe`). The neuro-symbolic path still measures at a simulated UEFI gate and watches sandbox assembly/API behavior, so obfuscation does not get a host execute. Safe apps (Paint, Notepad, Calculator) still open after they clear.
+1. **Sandbox workstation** — fake Windows desktop. Classic AV (scan-time + run-time) can miss a packed dummy (`PhotoViewer.crypt.exe`). After AV says CLEAN, Photos opens like a normal app (click through vacation pictures). The neuro-symbolic path still watches the unpack and blocks host persist. Safe apps (Paint, Notepad, Calculator) still open after they clear.
 2. **Campaign lab** — network-map race of dummy specimens vs the two detectors.
 
 No Python server is required to host it. The firmware gate is a **UI simulation**, not real BIOS/UEFI control.

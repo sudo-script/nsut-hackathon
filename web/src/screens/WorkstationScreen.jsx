@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AssemblyTape } from "../components/AssemblyTape.jsx";
 import { AV_STEPS, AvTray, ClassicAvWindow, classicAvResult } from "../components/ClassicAv.jsx";
 import { HostAppWindow } from "../components/HostApps.jsx";
@@ -14,6 +14,22 @@ const BIOS_STEPS = [
   "Divert to sandbox",
 ];
 
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function pickPackedFrames(frames) {
+  const interesting = frames.filter((item) =>
+    ["steal", "exfil", "beacon", "creds", "spawn"].includes(item.visual)
+  );
+  const picked = (interesting.length ? interesting : frames).slice(0, 4);
+  return picked.length ? picked : frames.slice(0, 3);
+}
+
+function rememberApp(prev, file) {
+  return prev.some((item) => item.id === file.id) ? prev : [...prev, file];
+}
+
 export default function WorkstationScreen() {
   const [selected, setSelected] = useState(null);
   const [phase, setPhase] = useState("idle");
@@ -25,86 +41,122 @@ export default function WorkstationScreen() {
   const [packets, setPackets] = useState([]);
   const [openApps, setOpenApps] = useState([]);
   const [avStep, setAvStep] = useState(0);
-  const timer = useRef(null);
+  const runId = useRef(0);
 
   const campaign = useMemo(() => {
     if (!selected?.scenario) return null;
     return applyThresholds(loadCampaign(selected.scenario, 35, false), 0.5, 0.24);
   }, [selected]);
 
-  const frame = campaign && frameIndex >= 0 ? campaign.frames[frameIndex] : null;
+  const frame =
+    campaign && frameIndex >= 0
+      ? campaign.frames.find((item) => item.index === frameIndex) || campaign.frames[frameIndex]
+      : null;
 
-  useEffect(() => () => clearTimeout(timer.current), []);
+  async function play(file, token) {
+    const alive = () => runId.current === token;
 
-  useEffect(() => {
-    if (phase !== "av" || !selected) return;
-    if (avStep >= AV_STEPS.length) {
-      timer.current = setTimeout(() => {
-        setPhase("bios");
-        setBiosStep(0);
-      }, 700);
-      return;
+    setAvStep(0);
+    setPhase("av");
+    for (let i = 1; i <= AV_STEPS.length; i += 1) {
+      await wait(220);
+      if (!alive()) return;
+      setAvStep(i);
     }
-    timer.current = setTimeout(() => setAvStep((n) => n + 1), 400);
-    return () => clearTimeout(timer.current);
-  }, [phase, avStep, selected]);
+    await wait(350);
+    if (!alive()) return;
 
-  useEffect(() => {
-    if (phase !== "bios" || !selected) return;
-    if (biosStep >= BIOS_STEPS.length) {
-      timer.current = setTimeout(() => {
-        setPhase("sandbox");
-        if (selected.localOnly || selected.app) {
-          setProcesses([{ name: selected.processName || "app.exe", title: selected.name }]);
-          setTimeout(() => finishRun(selected, selected.promote === "allow"), selected.app ? 1400 : 1600);
-        } else {
-          setFrameIndex(0);
+    // Packed dummy: AV reports CLEAN, so Photos opens like a normal app.
+    if (file.obfuscated && file.app === "photoviewer") {
+      setPhase("sandbox");
+      setProcesses([{ name: file.processName || "PhotoViewer.crypt.exe", title: "Photos" }]);
+      setOpenApps((prev) => rememberApp(prev, file));
+      const trace = applyThresholds(loadCampaign(file.scenario, 35, false), 0.5, 0.24);
+      for (const current of pickPackedFrames(trace.frames)) {
+        if (!alive()) return;
+        setFrameIndex(current.index);
+        setProcesses((prev) => rememberProcess(prev, current));
+        if (isNetwork(current)) {
+          setPackets((prev) =>
+            [
+              {
+                id: `${current.index}-${current.visual}`,
+                src: current.source,
+                dst: current.target,
+                stage: current.stage,
+                title: current.title,
+                stolen: current.stolen_name,
+                alert: current.ns_alert || current.ml_alert,
+              },
+              ...prev,
+            ].slice(0, 10)
+          );
         }
-      }, 400);
+        await wait(800);
+      }
+      if (!alive()) return;
+      finishRun(file, false);
       return;
     }
-    timer.current = setTimeout(() => setBiosStep((n) => n + 1), 420);
-    return () => clearTimeout(timer.current);
-  }, [phase, biosStep, selected]);
 
-  useEffect(() => {
-    if (phase !== "sandbox" || !campaign || selected?.localOnly) return;
-    if (frameIndex < 0) return;
-    const current = campaign.frames[frameIndex];
-    if (current) {
+    setBiosStep(0);
+    setPhase("bios");
+    for (let i = 1; i <= BIOS_STEPS.length; i += 1) {
+      await wait(220);
+      if (!alive()) return;
+      setBiosStep(i);
+    }
+    await wait(200);
+    if (!alive()) return;
+
+    setPhase("sandbox");
+    setProcesses([{ name: file.processName || "app.exe", title: file.name }]);
+
+    if (file.localOnly || (file.app && file.promote === "allow")) {
+      await wait(700);
+      if (!alive()) return;
+      finishRun(file, true);
+      return;
+    }
+
+    const trace = applyThresholds(loadCampaign(file.scenario, 35, false), 0.5, 0.24);
+    for (let i = 0; i < trace.frames.length; i += 1) {
+      if (!alive()) return;
+      const current = trace.frames[i];
+      setFrameIndex(current.index);
       setProcesses((prev) => rememberProcess(prev, current));
       if (isNetwork(current)) {
-        setPackets((prev) => [
-          {
-            id: `${current.index}-${current.visual}`,
-            src: current.source,
-            dst: current.target,
-            stage: current.stage,
-            title: current.title,
-            stolen: current.stolen_name,
-            alert: current.ns_alert || current.ml_alert,
-          },
-          ...prev,
-        ].slice(0, 10));
+        setPackets((prev) =>
+          [
+            {
+              id: `${current.index}-${current.visual}`,
+              src: current.source,
+              dst: current.target,
+              stage: current.stage,
+              title: current.title,
+              stolen: current.stolen_name,
+              alert: current.ns_alert || current.ml_alert,
+            },
+            ...prev,
+          ].slice(0, 10)
+        );
       }
+      await wait(850);
     }
-    if (frameIndex + 1 >= campaign.frames.length) {
-      timer.current = setTimeout(() => finishRun(selected, selected.promote === "allow"), 900);
-      return;
-    }
-    timer.current = setTimeout(() => setFrameIndex((n) => n + 1), 1100);
-    return () => clearTimeout(timer.current);
-  }, [phase, frameIndex, campaign, selected]);
+    if (!alive()) return;
+    finishRun(file, file.promote === "allow");
+  }
 
   function openFile(file) {
-    clearTimeout(timer.current);
+    runId.current += 1;
+    const token = runId.current;
     setSelected(file);
-    setPhase("av");
     setAvStep(0);
     setBiosStep(0);
     setFrameIndex(-1);
     setProcesses([]);
     setPackets([]);
+    play(file, token);
   }
 
   function finishRun(file, allow) {
@@ -112,7 +164,7 @@ export default function WorkstationScreen() {
     if (allow) {
       setPromoted((prev) => ({ ...prev, [file.id]: true }));
       if (file.app) {
-        setOpenApps((prev) => (prev.some((item) => item.id === file.id) ? prev : [...prev, file]));
+        setOpenApps((prev) => rememberApp(prev, file));
       }
     } else {
       setBlocked((prev) => ({ ...prev, [file.id]: true }));
@@ -129,7 +181,9 @@ export default function WorkstationScreen() {
           : phase === "bios"
             ? "Firmware gate — host execute is denied until sandbox returns"
             : phase === "sandbox"
-              ? "Executing only inside the isolated sandbox"
+              ? selected?.obfuscated
+                ? "Photos opened (AV CLEAN). World model is watching the unpack."
+                : "Executing only inside the isolated sandbox"
               : "Double-click a desktop file. It cannot run on the host first.";
 
   return (
@@ -164,17 +218,20 @@ export default function WorkstationScreen() {
               ))}
             </div>
 
-            {phase === "allowed" &&
-              openApps.map((file, index) => (
-                <HostAppWindow
-                  key={file.id}
-                  file={file}
-                  offset={index}
-                  onClose={() => setOpenApps((prev) => prev.filter((item) => item.id !== file.id))}
-                />
-              ))}
+            {openApps.map((file, index) => (
+              <HostAppWindow
+                key={file.id}
+                file={file}
+                frame={selected?.id === file.id ? frame : null}
+                quarantined={Boolean(blocked[file.id])}
+                offset={index}
+                onClose={() => setOpenApps((prev) => prev.filter((item) => item.id !== file.id))}
+              />
+            ))}
 
-            {(phase === "sandbox" || phase === "blocked") && selected && (
+            <ClassicAvWindow file={selected} step={avStep} visible={phase === "av"} />
+
+            {(phase === "sandbox" || phase === "blocked") && selected && !selected.obfuscated && (
               <div className={`vm-window ${phase === "blocked" ? "hot" : ""}`}>
                 <div className="vm-title">
                   <span>SANDBOX — Windows 11 (isolated)</span>
@@ -198,8 +255,6 @@ export default function WorkstationScreen() {
                 </div>
               </div>
             )}
-
-            <ClassicAvWindow file={selected} step={avStep} visible={Boolean(selected) && phase !== "idle"} />
 
             {phase === "bios" && selected && (
               <div className="bios-overlay">
@@ -234,7 +289,7 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
                   {file.windowTitle || file.name}
                 </span>
               ))}
-              {selected && !openApps.some((file) => file.id === selected.id) && (
+              {selected && (
                 <span className="pill dim">{selected.name}</span>
               )}
               <AvTray file={selected} phase={phase} />
@@ -347,7 +402,7 @@ Secure Boot: ${selected.bios.secureBoot ? "ON" : "OFF"}`}
             {phase === "blocked" && (
               <p>
                 {selected?.obfuscated
-                  ? "Classic AV stayed CLEAN because the on-disk sample is packed. The world model still blocked host execute from sandbox behavior (temp execution, rare outbound, theft indicators)."
+                  ? "Photos opened like a normal app because classic AV said CLEAN. After the dummy unpack (temp execution, rare outbound, theft indicators) the world model still blocked host persist."
                   : "Main OS never received an executable mapping. Snapshot can be discarded."}
               </p>
             )}
@@ -391,4 +446,3 @@ function rememberProcess(prev, frame) {
   const exists = prev.some((item) => item.title === next.title);
   return exists ? prev : [next, ...prev].slice(0, 5);
 }
-
